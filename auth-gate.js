@@ -13,9 +13,9 @@
   var shellEl = document.querySelector('.app-shell');
   var form = document.getElementById('authForm');
   var emailInput = document.getElementById('authEmail');
-  var passwordInput = document.getElementById('authPassword');
   var errorEl = document.getElementById('authError');
-  var submitBtn = form ? form.querySelector('button[type="submit"]') : null;
+  var successEl = document.getElementById('authSuccess');
+  var submitBtn = document.getElementById('authSubmitBtn');
 
   if (!config.url || config.url.indexOf('PASTE_YOUR') === 0) {
     showError('El HUB todavía no tiene credenciales de Supabase configuradas. Revisa supabase-config.js.');
@@ -76,10 +76,14 @@
     if (errorEl) errorEl.textContent = msg;
   }
 
+  function showSuccess(msg) {
+    if (successEl) successEl.textContent = msg;
+  }
+
   function setLoading(isLoading) {
     if (!submitBtn) return;
     submitBtn.disabled = isLoading;
-    submitBtn.textContent = isLoading ? 'Entrando…' : 'Entrar';
+    submitBtn.textContent = isLoading ? 'Enviando…' : 'Enviar link de acceso';
   }
 
   async function fetchAllRows() {
@@ -148,22 +152,31 @@
     form.addEventListener('submit', async function (evt) {
       evt.preventDefault();
       showError('');
+      showSuccess('');
       setLoading(true);
       var email = emailInput.value.trim();
-      var password = passwordInput.value;
-      var result = await supabase.auth.signInWithPassword({ email: email, password: password });
+      // Magic link: sin contraseña, Supabase manda un correo con un link
+      // que al hacer clic vuelve aquí mismo ya logueado (lo captura el
+      // listener de onAuthStateChange de más abajo).
+      var result = await supabase.auth.signInWithOtp({
+        email: email,
+        options: { emailRedirectTo: window.location.href },
+      });
       setLoading(false);
       if (result.error) {
-        showError('No se pudo entrar: ' + result.error.message);
+        showError('No se pudo enviar el link: ' + result.error.message);
         return;
       }
-      bootHub(result.data.user);
+      form.style.display = 'none';
+      showSuccess('Listo, te enviamos un link a ' + email + '. Ábrelo desde ese mismo correo para entrar.');
     });
   }
 
-  // Si ya había sesión activa (misma computadora, visita anterior), entra directo.
-  supabase.auth.getSession().then(function (result) {
-    var session = result.data && result.data.session;
+  // Cubre dos casos: (1) ya había sesión activa en este navegador, entra
+  // directo; (2) la persona acaba de volver del link de su correo, Supabase
+  // detecta el token en la URL y dispara este mismo evento con la sesión ya
+  // creada.
+  supabase.auth.onAuthStateChange(function (event, session) {
     if (session && session.user) {
       bootHub(session.user);
     }

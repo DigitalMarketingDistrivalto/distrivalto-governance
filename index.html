@@ -3,332 +3,835 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Digital Marketing Governance — Distrivalto</title>
-<meta name="description" content="Digital Marketing Governance Framework — Distrivalto">
+<title>Digital Marketing HUB — Distrivalto</title>
+<meta name="description" content="Central operating hub for Distrivalto Digital Marketing — governance, execution, objectives, campaigns, and reporting in one place.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
 </head>
 <body>
 
-<!-- Progress bar -->
-<div class="progress-bar" id="progressBar"></div>
-
-<!-- Navigation dots -->
-<nav class="nav-dots" id="navDots" aria-label="Section navigation">
-  <button class="nav-dot active" data-section="0" aria-label="Hero"><span>01</span></button>
-  <button class="nav-dot" data-section="1" aria-label="Why Now"><span>02</span></button>
-  <button class="nav-dot" data-section="2" aria-label="Current State"><span>03</span></button>
-  <button class="nav-dot" data-section="3" aria-label="Our Solution"><span>04</span></button>
-  <button class="nav-dot" data-section="4" aria-label="Governance Model"><span>05</span></button>
-  <button class="nav-dot" data-section="5" aria-label="Platforms"><span>06</span></button>
-  <button class="nav-dot" data-section="6" aria-label="Deliverables"><span>07</span></button>
-  <button class="nav-dot" data-section="7" aria-label="Roadmap"><span>08</span></button>
-  <button class="nav-dot" data-section="8" aria-label="Executive Approval"><span>09</span></button>
-</nav>
-
-<!-- Fixed header -->
-<header class="site-header">
-  <div class="brand-mark">
-    <img src="distrivalto-logo-transparent.png" alt="Distrivalto" class="brand-logo">
+<!-- ============ LOGIN GATE ============ -->
+<div class="auth-gate" id="authGate">
+  <div class="auth-card">
+    <img src="assets/distrivalto-logo.png" alt="Distrivalto" class="auth-logo">
+    <h1>Digital Marketing HUB</h1>
+    <p class="auth-sub">Ingresa con tu cuenta de equipo</p>
+    <form id="authForm">
+      <input type="email" id="authEmail" placeholder="Email" required autocomplete="username">
+      <input type="password" id="authPassword" placeholder="Contraseña" required autocomplete="current-password">
+      <button type="submit">Entrar</button>
+    </form>
+    <p class="auth-error" id="authError"></p>
+    <p class="auth-hint">¿No tienes acceso todavía? Pídele a Claudio que te invite desde Supabase.</p>
   </div>
-  <div class="header-tag">Digital Marketing Governance</div>
-</header>
+</div>
 
-<main id="scrollContainer">
+<div class="app-shell" style="display:none;">
 
-  <!-- ============ 01 HERO ============ -->
-  <section class="panel hero" id="section-0" data-index="0">
-    <div class="hero-bg" aria-hidden="true">
-      <svg class="hero-grid" viewBox="0 0 1440 900" preserveAspectRatio="none">
-        <defs>
-          <pattern id="gridPattern" width="60" height="60" patternUnits="userSpaceOnUse">
-            <path d="M 60 0 L 0 0 0 60" fill="none" stroke="rgba(29,43,127,0.05)" stroke-width="1"/>
-          </pattern>
-        </defs>
-        <rect width="1440" height="900" fill="url(#gridPattern)"/>
-      </svg>
-      <div class="hero-orb hero-orb-1"></div>
-      <div class="hero-orb hero-orb-2"></div>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <img src="assets/distrivalto-logo.png" alt="Distrivalto" class="sidebar-logo">
+      <span class="sidebar-brand-name">Digital Marketing HUB</span>
     </div>
 
-    <div class="panel-inner hero-inner">
-      <div class="eyebrow reveal">
-        <span class="eyebrow-dot"></span>
-        Executive Presentation — Distrivalto
-      </div>
+    <nav class="sidebar-nav" aria-label="Primary navigation">
+      <span class="sidebar-group-label">Overview</span>
+      <button class="nav-item active" data-view="dashboard">
+        <svg viewBox="0 0 24 24" class="nav-icon"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+        <span>Dashboard</span>
+      </button>
 
-      <h1 class="hero-title reveal">
-        Digital Marketing
-        <span class="hero-title-accent">Governance</span>
-      </h1>
+      <span class="sidebar-group-label">Projects</span>
+      <button class="nav-item" data-view="projects">
+        <svg viewBox="0 0 24 24" class="nav-icon"><rect x="4" y="4" width="16" height="16" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 9h8M8 13h8M8 17h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        <span>Projects</span>
+      </button>
 
-      <p class="hero-sub reveal">
-        A framework for scalable, accountable, and measurable growth
-        across Holstein Housewares, Connecto and Alessa — built for
-        Distrivalto's expansion.
-      </p>
+      <span class="sidebar-group-label">Execution Plan</span>
+      <button class="nav-item" data-view="tasks">
+        <svg viewBox="0 0 24 24" class="nav-icon"><path d="M5 6.5l1.6 1.6L9.5 5M5 13.5l1.6 1.6L9.5 12M5 20.5l1.6 1.6L9.5 19" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M13 6h6M13 13h6M13 20h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <span>Tasks</span>
+      </button>
+      <button class="nav-item" data-view="objectives">
+        <svg viewBox="0 0 24 24" class="nav-icon"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="0.8" fill="currentColor"/></svg>
+        <span>Objectives &amp; KPIs</span>
+      </button>
+      <button class="nav-item" data-view="campaigns">
+        <svg viewBox="0 0 24 24" class="nav-icon"><path d="M4 19V9M10 19V5M16 19v-7M20 19v-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <span>Campaign KPIs</span>
+      </button>
+      <button class="nav-item" data-view="briefs">
+        <svg viewBox="0 0 24 24" class="nav-icon"><rect x="5" y="3" width="14" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M9 8h6M9 12h6M9 16h3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M8.5 3.5l0.8 1.8h5.4l0.8-1.8" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg>
+        <span>Briefs</span>
+      </button>
+      <button class="nav-item" data-view="contentInputs">
+        <svg viewBox="0 0 24 24" class="nav-icon"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>LinkedIn B2B</span>
+      </button>
+      <button class="nav-item" data-view="calendar">
+        <svg viewBox="0 0 24 24" class="nav-icon"><rect x="3.5" y="5" width="17" height="15.5" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M3.5 9.5h17M8 3v4M16 3v4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        <span>Content Calendar</span>
+      </button>
 
-      <div class="hero-meta reveal">
-        <div class="hero-meta-item">
-          <span class="hero-meta-label">Prepared by</span>
-          <span class="hero-meta-value">Claudio Mendoza - Digital Marketing Specialist</span>
+      <span class="sidebar-group-label">Governance</span>
+      <button class="nav-item" data-view="inventory">
+        <svg viewBox="0 0 24 24" class="nav-icon"><path d="M4 6h16M4 12h16M4 18h10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        <span>Digital Assets Inventory</span>
+      </button>
+      <button class="nav-item" data-view="access">
+        <svg viewBox="0 0 24 24" class="nav-icon"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+        <span>Access Matrix</span>
+      </button>
+      <button class="nav-item" data-view="audit">
+        <svg viewBox="0 0 24 24" class="nav-icon"><rect x="4" y="3" width="16" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 8h8M8 12h8M8 16h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        <span>Platform Audit</span>
+      </button>
+      <button class="nav-item" data-view="quickwins">
+        <svg viewBox="0 0 24 24" class="nav-icon"><rect x="3.5" y="4" width="5" height="16" rx="1.2" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="9.5" y="4" width="5" height="11" rx="1.2" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="15.5" y="4" width="5" height="8" rx="1.2" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+        <span>Quick Wins</span>
+      </button>
+
+      <span class="sidebar-group-label">Reporting</span>
+      <button class="nav-item" data-view="reports">
+        <svg viewBox="0 0 24 24" class="nav-icon"><path d="M6 20V10M12 20V4M18 20v-7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        <span>Weekly Reports</span>
+      </button>
+      <button class="nav-item" data-view="notes">
+        <svg viewBox="0 0 24 24" class="nav-icon"><rect x="4" y="3" width="16" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 8h8M8 12h6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        <span>Meeting Notes</span>
+      </button>
+      <button class="nav-item" data-view="timeline">
+        <svg viewBox="0 0 24 24" class="nav-icon"><circle cx="5" cy="12" r="2" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="6" r="2" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="19" cy="16" r="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M7 11l3.5-3.7M14 7.5L17.3 14.5" stroke="currentColor" stroke-width="1.6"/></svg>
+        <span>Project Timeline</span>
+      </button>
+
+      <span class="sidebar-group-label">System</span>
+      <button class="nav-item" data-view="settings">
+        <svg viewBox="0 0 24 24" class="nav-icon"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M19.4 13.5a7.9 7.9 0 000-3l1.8-1.4-2-3.4-2.1.6a7.8 7.8 0 00-2.6-1.5L14 2.5h-4l-.5 2.3a7.8 7.8 0 00-2.6 1.5l-2.1-.6-2 3.4L4.6 10.5a7.9 7.9 0 000 3l-1.8 1.4 2 3.4 2.1-.6a7.8 7.8 0 002.6 1.5l.5 2.3h4l.5-2.3a7.8 7.8 0 002.6-1.5l2.1.6 2-3.4-1.8-1.4z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+        <span>Settings</span>
+      </button>
+      <button class="nav-item" data-view="docs">
+        <svg viewBox="0 0 24 24" class="nav-icon"><path d="M5 4.5A1.5 1.5 0 016.5 3H16l3 3v13.5a1.5 1.5 0 01-1.5 1.5h-11A1.5 1.5 0 015 19.5v-15z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M16 3v3h3M8 11h8M8 15h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        <span>Documentation</span>
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="user-chip" id="userChipBtn" type="button">
+        <span class="user-avatar" id="userAvatar">CM</span>
+        <div class="user-meta">
+          <span class="user-name" id="userNameLabel">Claudio Mendoza</span>
+          <span class="user-role" id="userRoleLabel">Digital Marketing Specialist</span>
         </div>
-      </div>
+        <svg class="user-chip-edit" viewBox="0 0 24 24"><path d="M4 20h4L18.5 9.5a2 2 0 000-2.8l-1.2-1.2a2 2 0 00-2.8 0L4 16v4z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+      </button>
     </div>
+  </aside>
 
-    <div class="scroll-cue reveal" aria-hidden="true">
-      <span>Scroll</span>
-      <div class="scroll-cue-line"></div>
-    </div>
-  </section>
+  <!-- ============ MAIN AREA ============ -->
+  <div class="main-area">
 
-  <!-- ============ 02 WHY NOW ============ -->
-  <section class="panel" id="section-1" data-index="1">
-    <div class="panel-inner">
-      <div class="section-kicker reveal">
-        <span class="kicker-index">02</span>
-        <span class="kicker-label">Why Now</span>
-      </div>
-      <h2 class="section-title reveal">Growth has outpaced governance.</h2>
-      <p class="section-lede reveal">
-        Distrivalto operates three brands across many countries on more than
-        a dozen platforms. That scale is an asset — until ownership,
-        access, and measurement fall behind it.
-      </p>
-
-      <div class="reason-grid reveal">
-        <div class="reason-card">
-          <div class="reason-number">01</div>
-          <h3>Multi-brand complexity</h3>
-          <p>Holstein Housewares, Connecto, and Alessa each run independent digital footprints with distinct audiences and funnels.</p>
-        </div>
-        <div class="reason-card">
-          <div class="reason-number">02</div>
-          <h3>US and LATAM expansion</h3>
-          <p>Active growth in the US and LATAM regions like: Ecuador, Peru, Colombia, Mexico, P.R., D.R., Bolivia and others, demands consistent structure, not market-by-market improvisation.</p>
-        </div>
-        <div class="reason-card">
-          <div class="reason-number">03</div>
-          <h3>Platform sprawl</h3>
-          <p>Over seventeen platforms and tools in active use — each a potential point of access risk, data loss, or measurement gap.</p>
-        </div>
-        <div class="reason-card">
-          <div class="reason-number">04</div>
-          <h3>Revenue accountability</h3>
-          <p>A business of this scale deserves a marketing function measured in CAC, ROAS, and LTV — not impressions alone.</p>
+    <header class="topbar">
+      <div class="topbar-title-group">
+        <button class="mobile-toggle" id="mobileToggle" aria-label="Open navigation">
+          <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </button>
+        <div class="topbar-title">
+          <h1 id="topbarTitle">Dashboard</h1>
+          <span id="topbarSubtitle" class="topbar-subtitle">Overall status of the digital governance project</span>
         </div>
       </div>
-    </div>
-  </section>
-
-  <!-- ============ 03 CURRENT STATE ============ -->
-  <section class="panel panel-dark" id="section-2" data-index="2">
-    <div class="panel-inner">
-      <div class="section-kicker reveal">
-        <span class="kicker-index">03</span>
-        <span class="kicker-label">Current State</span>
+      <div class="topbar-actions">
+        <span class="topbar-badge" id="topbarDate"></span>
       </div>
-      <h2 class="section-title reveal">Where the risk lives today.</h2>
-      <p class="section-lede reveal">
-        A candid assessment — not of effort, but of structure. These gaps
-        are common at this stage of growth, and each is directly fixable.
-      </p>
+    </header>
 
-      <div class="state-list reveal">
-        <div class="state-row">
-          <div class="state-tag">Access</div>
-          <div class="state-body">
-            <h4>Fragmented platform ownership</h4>
-            <p>Admin rights scattered across different individual accounts — with no single source of truth.</p>
+    <main class="view-container" id="viewContainer">
+
+      <!-- ============ DASHBOARD ============ -->
+      <section class="view active" id="view-dashboard">
+        <div class="stat-grid" id="statGrid"></div>
+
+        <div class="dashboard-grid">
+          <div class="panel-card">
+            <div class="panel-card-head">
+              <h3>Governance Model</h3>
+              <span class="panel-card-tag">Live</span>
+            </div>
+            <div class="mini-gov-chain" id="miniGovChain"></div>
+          </div>
+
+          <div class="panel-card">
+            <div class="panel-card-head">
+              <h3>Recent Activity</h3>
+            </div>
+            <ul class="activity-list" id="activityList"></ul>
           </div>
         </div>
-        <div class="state-row">
-          <div class="state-tag">Tracking</div>
-          <div class="state-body">
-            <h4>Incomplete measurement layer</h4>
-            <p>GA4, GTM, and conversion tracking not fully validated across all brand properties.</p>
+      </section>
+
+      <!-- ============ PROJECTS ============ -->
+      <section class="view" id="view-projects">
+
+        <div id="projectsListMode">
+          <div class="toolbar">
+            <p class="view-intro" style="margin-bottom:0;">Cada proyecto vive aquí con su objetivo, resultado esperado, entregable y su propio checklist de tareas y subtareas.</p>
+            <div class="toolbar-spacer"></div>
+            <button class="btn btn-primary" id="addProjectBtn">+ Add Project</button>
+          </div>
+          <div class="project-grid" id="projectGrid"></div>
+        </div>
+
+        <div id="projectDetailMode" hidden>
+          <button class="btn btn-ghost" id="backToProjectsBtn">← All Projects</button>
+
+          <div class="panel-card project-detail-head">
+            <div class="project-detail-title-row">
+              <h2 contenteditable="true" id="projectDetailName"></h2>
+              <button class="icon-btn" id="deleteProjectBtn" aria-label="Delete project">
+                <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              </button>
+            </div>
+            <div class="project-progress-row">
+              <div class="timeline-progress"><div class="timeline-progress-fill" id="projectDetailBarFill"></div></div>
+              <span class="project-progress-label" id="projectDetailPct"></span>
+            </div>
+            <div class="project-meta-grid">
+              <div class="project-meta-field">
+                <label>Descripción</label>
+                <div class="project-meta-value" contenteditable="true" id="projectDetailDesc"></div>
+              </div>
+              <div class="project-meta-field">
+                <label>Objetivo</label>
+                <div class="project-meta-value" contenteditable="true" id="projectDetailObjective"></div>
+              </div>
+              <div class="project-meta-field">
+                <label>Resultado esperado</label>
+                <div class="project-meta-value" contenteditable="true" id="projectDetailResult"></div>
+              </div>
+              <div class="project-meta-field">
+                <label>Entregable</label>
+                <div class="project-meta-value" contenteditable="true" id="projectDetailDeliverable"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel-card">
+            <div class="panel-card-head">
+              <h3>Tasks</h3>
+              <button class="btn btn-ghost" id="addProjectTaskBtn">+ Add Task</button>
+            </div>
+            <div class="project-task-list" id="projectTaskList"></div>
           </div>
         </div>
-        <div class="state-row">
-          <div class="state-tag">Process</div>
-          <div class="state-body">
-            <h4>No unified governance model</h4>
-            <p>Access and approval decisions happen case by case, with no defined chain of ownership.</p>
+
+      </section>
+
+      <!-- ============ TASKS (30-60-90 PLAN) ============ -->
+      <section class="view" id="view-tasks">
+        <div class="toolbar">
+          <p class="view-intro" style="margin-bottom:0;">The 27 official deliverables of the 30-60-90 day plan. Check items off as you complete them.</p>
+          <div class="toolbar-spacer"></div>
+          <button class="btn btn-primary" id="addTaskBtn">+ Add Task</button>
+        </div>
+        <div class="tasks-phases" id="tasksPhases"></div>
+      </section>
+
+      <!-- ============ OBJECTIVES & KPIs ============ -->
+      <section class="view" id="view-objectives">
+        <div class="obj-status-banner">Versión final acordada con la Marketing Manager — lista para ejecutar</div>
+
+        <div class="panel-card">
+          <div class="panel-card-head">
+            <h3>KPIs — H2 2026</h3>
+            <button class="btn btn-ghost" id="addKpiBtn">+ Add KPI</button>
+          </div>
+          <p class="view-intro">2 KPIs de proceso y gobernanza — miden cómo se ejecuta, no un número de rendimiento de pauta todavía.</p>
+          <div class="kpi-list" id="kpiList"></div>
+        </div>
+
+        <div class="okr-section">
+          <div class="okr-section-head">
+            <div>
+              <div class="objective-label">Objetivo H2 2026</div>
+              <h3 id="objectiveTitle"></h3>
+            </div>
+          </div>
+
+          <div class="quarter-block" id="quarterQ3">
+            <div class="quarter-head">
+              <span class="quarter-tag">Q3</span>
+              <h4 id="q3Label"></h4>
+              <button class="btn btn-ghost btn-sm" data-add-kr="Q3">+ Add Key Result</button>
+            </div>
+            <div class="kr-grid" id="krGridQ3"></div>
+          </div>
+
+          <div class="quarter-block" id="quarterQ4">
+            <div class="quarter-head">
+              <span class="quarter-tag">Q4</span>
+              <h4 id="q4Label"></h4>
+              <button class="btn btn-ghost btn-sm" data-add-kr="Q4">+ Add Key Result</button>
+            </div>
+            <div class="kr-grid" id="krGridQ4"></div>
           </div>
         </div>
-        <div class="state-row">
-          <div class="state-tag">Reporting</div>
-          <div class="state-body">
-            <h4>Inconsistent performance visibility</h4>
-            <p>No standing dashboard connecting spend, leads, and revenue across brands and markets.</p>
+
+        <div class="panel-card">
+          <div class="panel-card-head"><h3>Métricas de campaña por objetivo</h3></div>
+          <p class="view-intro">Guía de referencia para elegir los KPIs de cada brief, según el objetivo de la campaña.</p>
+          <div class="table-card">
+            <table class="data-table" id="campaignMetricsTable">
+              <thead><tr><th>Objetivo de campaña</th><th>Métricas sugeridas a elegir en el brief</th></tr></thead>
+              <tbody id="campaignMetricsBody"></tbody>
+            </table>
           </div>
         </div>
-      </div>
+      </section>
+
+      <!-- ============ CAMPAIGN KPIs ============ -->
+      <section class="view" id="view-campaigns">
+        <div class="toolbar">
+          <div class="search-field">
+            <svg viewBox="0 0 24 24" class="search-icon"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M20 20l-4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <input type="text" id="campaignSearch" placeholder="Search campaign…">
+          </div>
+          <div class="filter-group" id="campaignPlatformFilters"></div>
+          <div class="toolbar-spacer"></div>
+          <button class="btn btn-ghost" id="addCampaignPlatformBtn">+ Add Platform</button>
+          <button class="btn btn-ghost" id="addCampaignColumnBtn">+ Add KPI Column</button>
+          <button class="btn btn-primary" id="addCampaignRowBtn">+ Add Entry</button>
+        </div>
+
+        <div class="table-card">
+          <table class="data-table" id="campaignTable">
+            <thead id="campaignHead"></thead>
+            <tbody id="campaignBody"></tbody>
+          </table>
+          <div class="table-empty" id="campaignEmpty" hidden>No campaign entries yet — add your first one.</div>
+        </div>
+
+        <div class="panel-card chart-panel">
+          <div class="panel-card-head">
+            <h3>Growth Curve — Month over Month</h3>
+          </div>
+          <div class="chart-controls">
+            <div class="chart-control">
+              <label>Metric</label>
+              <select id="chartMetricSelect"></select>
+            </div>
+            <div class="chart-control">
+              <label>Platform</label>
+              <select id="chartPlatformSelect"></select>
+            </div>
+            <div class="toolbar-spacer"></div>
+            <button class="btn btn-ghost" id="exportChartPngBtn">Export chart (PNG)</button>
+            <button class="btn btn-ghost" id="exportCsvBtn">Export data (CSV)</button>
+          </div>
+          <div class="chart-canvas-wrap">
+            <canvas id="growthChartCanvas"></canvas>
+          </div>
+          <div class="chart-empty" id="chartEmpty" hidden>Add at least one campaign entry to see the growth curve.</div>
+        </div>
+      </section>
+
+      <!-- ============ BRIEFS ============ -->
+      <section class="view" id="view-briefs">
+        <p class="view-intro">Brief estándar de Digital Marketing — un solo formato para levantar cualquier solicitud de campaña o pieza digital. Cada envío queda registrado abajo.</p>
+
+        <div class="panel-card brief-form">
+          <h3>Nuevo brief</h3>
+
+          <div class="brief-section-label">Información general</div>
+          <div class="brief-form-grid">
+            <div class="field-group">
+              <label class="field-label">Business Unit</label>
+              <select id="briefBusinessUnit" class="text-input">
+                <option>Digital Marketing</option>
+                <option>Ecommerce USA</option>
+                <option>Retail USA</option>
+                <option>Retail LATAM</option>
+                <option>Trade Marketing</option>
+                <option>Brand</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Marca</label>
+              <select id="briefBrand" class="text-input">
+                <option>Holstein Housewares</option>
+                <option>Connecto</option>
+                <option>Alessa</option>
+                <option>Corporativo / Distrivalto</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label class="field-label">País / Mercado</label>
+              <input type="text" id="briefMarket" class="text-input" placeholder="EEUU, Ecuador, México…">
+            </div>
+            <div class="field-group">
+              <label class="field-label">Solicitante</label>
+              <input type="text" id="briefRequester" class="text-input" placeholder="Nombre de quien solicita">
+            </div>
+            <div class="field-group">
+              <label class="field-label">Fecha de solicitud</label>
+              <input type="date" id="briefRequestDate" class="text-input">
+            </div>
+            <div class="field-group">
+              <label class="field-label">Fecha de lanzamiento deseada</label>
+              <input type="date" id="briefLaunchDate" class="text-input">
+            </div>
+          </div>
+
+          <div class="brief-section-label">Objetivo y contexto</div>
+          <label class="field-label">Nombre de la campaña / proyecto</label>
+          <input type="text" id="briefProjectName" class="text-input" placeholder="E.g. Back to School 2026">
+          <div class="brief-form-grid">
+            <div class="field-group">
+              <label class="field-label">Objetivo de negocio</label>
+              <textarea id="briefBusinessObjective" class="text-area" rows="2" placeholder="Qué resultado de negocio busca…"></textarea>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Objetivo de marketing digital</label>
+              <select id="briefMarketingObjective" class="text-input">
+                <option>Awareness</option>
+                <option>Tráfico calificado</option>
+                <option>Generación de leads</option>
+                <option>Conversión / Ventas</option>
+                <option>Engagement</option>
+                <option>Retención</option>
+              </select>
+            </div>
+          </div>
+          <label class="field-label">Público objetivo / audiencia</label>
+          <textarea id="briefAudience" class="text-area" rows="2" placeholder="A quién le hablamos…"></textarea>
+          <label class="field-label">Contexto / antecedentes</label>
+          <textarea id="briefContext" class="text-area" rows="2" placeholder="Por qué surge esta necesidad…"></textarea>
+
+          <div class="brief-section-label">Alcance digital</div>
+          <div class="brief-form-grid">
+            <div class="field-group">
+              <label class="field-label">Canales digitales</label>
+              <input type="text" id="briefChannels" class="text-input" placeholder="Meta, Google, TikTok, Email, SEO…">
+            </div>
+            <div class="field-group">
+              <label class="field-label">Producto(s) / SKU relacionados</label>
+              <input type="text" id="briefProducts" class="text-input">
+            </div>
+            <div class="field-group">
+              <label class="field-label">Presupuesto estimado</label>
+              <input type="text" id="briefBudget" class="text-input" placeholder="$">
+            </div>
+            <div class="field-group">
+              <label class="field-label">KPI principal</label>
+              <input type="text" id="briefKpi" class="text-input" placeholder="CPL, ROAS, CTR…">
+            </div>
+          </div>
+          <label class="field-label">Mensaje clave / propuesta de valor</label>
+          <textarea id="briefKeyMessage" class="text-area" rows="2"></textarea>
+
+          <div class="brief-section-label">Ejecución</div>
+          <div class="brief-form-grid">
+            <div class="field-group">
+              <label class="field-label">Fecha de inicio</label>
+              <input type="date" id="briefStartDate" class="text-input">
+            </div>
+            <div class="field-group">
+              <label class="field-label">Fecha de fin</label>
+              <input type="date" id="briefEndDate" class="text-input">
+            </div>
+            <div class="field-group">
+              <label class="field-label">¿Requiere diseño nuevo?</label>
+              <select id="briefNeedsDesign" class="text-input">
+                <option value="no">No</option>
+                <option value="yes">Sí — requiere brief creativo (Tier 2)</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Referencias / assets existentes</label>
+              <input type="text" id="briefReferences" class="text-input" placeholder="Link a Drive, Asana…">
+            </div>
+          </div>
+          <label class="field-label">Notas adicionales / aprobaciones</label>
+          <textarea id="briefNotes" class="text-area" rows="2"></textarea>
+
+          <button class="btn btn-primary" id="saveBriefBtn">Guardar brief</button>
+        </div>
+
+        <div class="panel-card">
+          <div class="panel-card-head">
+            <h3>Registro de Briefs</h3>
+          </div>
+          <div class="briefs-list" id="briefsList"></div>
+        </div>
+      </section>
+
+      <!-- ============ CONTENT INPUTS ============ -->
+      <section class="view" id="view-contentInputs">
+        <p class="view-intro">Banco de contenido de LinkedIn B2B: el tema, el copy final, quién publica y quién repostea, el estado de revisión y el material gráfico de cada post. Hoy lo completan Vanessa, Diego y Carolina; pensado para sumar Sales, Trade Marketing y Brand más adelante sin cambiar de sistema.</p>
+
+        <div class="panel-card brief-form">
+          <h3>Nuevo post</h3>
+
+          <div class="brief-section-label">Quién y cuándo</div>
+          <div class="brief-form-grid">
+            <div class="field-group">
+              <label class="field-label">Persona / Área</label>
+              <!-- Para sumar un área nueva (Sales, Brand, etc.) agrega la opción aquí -->
+              <select id="ciAuthor" class="text-input">
+                <option>Vanessa</option>
+                <option>Diego</option>
+                <option>Carolina</option>
+                <option>Distrivalto</option>
+                <option>Sales</option>
+                <option>Trade Marketing</option>
+                <option>Brand</option>
+                <option>Otro</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Fecha de publicación</label>
+              <input type="date" id="ciPublishDate" class="text-input">
+            </div>
+            <div class="field-group">
+              <label class="field-label">Pilar de contenido</label>
+              <select id="ciPillar" class="text-input">
+                <option>Innovación y tecnología</option>
+                <option>Categoría y relación con cliente</option>
+                <option>Visión estratégica</option>
+                <option>Prueba institucional (Distrivalto)</option>
+                <option>Reconocimiento de cliente</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Idioma</label>
+              <select id="ciLanguage" class="text-input">
+                <option>Español</option>
+                <option>Inglés</option>
+                <option>Bilingüe</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="brief-section-label">El contenido</div>
+          <label class="field-label">Tema a tocar</label>
+          <textarea id="ciTopic" class="text-area" rows="2" placeholder="¿De qué va a hablar el post?"></textarea>
+          <label class="field-label">Copy, el texto que se pondría en el post</label>
+          <textarea id="ciCopy" class="text-area" rows="5" placeholder="El texto final o casi final del post, listo para pulir y publicar…"></textarea>
+          <label class="field-label">Dato, cifra o historia real que lo respalde</label>
+          <textarea id="ciSupport" class="text-area" rows="2" placeholder="Lo que hace que el post no sea genérico…"></textarea>
+          <label class="field-label">¿Algo que NO se puede mencionar?</label>
+          <input type="text" id="ciDoNotMention" class="text-input" placeholder="Cliente sensible, cifra confidencial, etc. (opcional)">
+
+          <div class="brief-section-label">Estado y publicación</div>
+          <div class="brief-form-grid">
+            <div class="field-group">
+              <label class="field-label">Estado</label>
+              <select id="ciStatus" class="text-input">
+                <option>En revisión</option>
+                <option>Listo para postear</option>
+                <option>Publicado</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Publica primero</label>
+              <select id="ciPostsFirst" class="text-input">
+                <option>Vanessa</option>
+                <option>Diego</option>
+                <option>Carolina</option>
+                <option>Distrivalto</option>
+                <option>Sales</option>
+                <option>Trade Marketing</option>
+                <option>Brand</option>
+                <option>Otro</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Repostea</label>
+              <select id="ciReposts" class="text-input">
+                <option>No aplica</option>
+                <option>Distrivalto</option>
+                <option>Vanessa</option>
+                <option>Diego</option>
+                <option>Carolina</option>
+                <option>Sales</option>
+                <option>Trade Marketing</option>
+                <option>Brand</option>
+                <option>Otro</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="brief-section-label">Producción</div>
+          <div class="brief-form-grid">
+            <div class="field-group">
+              <label class="field-label">Material gráfico</label>
+              <select id="ciVisualType" class="text-input">
+                <option>Foto</option>
+                <option>Plantilla LinkedIn</option>
+                <option>Ninguno</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Urgencia</label>
+              <select id="ciUrgency" class="text-input">
+                <option>Calendario regular</option>
+                <option>Reactivo, algo puntual de esta semana</option>
+              </select>
+            </div>
+          </div>
+          <label class="field-label">Link o comentario de dónde está el material gráfico</label>
+          <input type="text" id="ciVisualLink" class="text-input" placeholder="Link a Drive/Canva, o una nota de dónde conseguirlo (opcional)">
+          <label class="field-label">Notas adicionales</label>
+          <textarea id="ciNotes" class="text-area" rows="2"></textarea>
+
+          <button class="btn btn-primary" id="saveContentInputBtn">Guardar post</button>
+        </div>
+
+        <div class="panel-card">
+          <div class="panel-card-head">
+            <h3>Banco de contenido LinkedIn B2B</h3>
+            <select id="ciFilterAuthor" class="text-input" style="max-width:220px;">
+              <option value="">Todas las personas / áreas</option>
+              <option>Vanessa</option>
+              <option>Diego</option>
+              <option>Carolina</option>
+              <option>Distrivalto</option>
+              <option>Sales</option>
+              <option>Trade Marketing</option>
+              <option>Brand</option>
+              <option>Otro</option>
+            </select>
+          </div>
+          <div class="briefs-list" id="contentInputsList"></div>
+        </div>
+      </section>
+
+      <!-- ============ CONTENT CALENDAR ============ -->
+      <section class="view" id="view-calendar">
+        <p class="view-intro" style="margin-bottom:14px;">Calendario de posteos por plataforma, marca y país. Arrastra un post a otro día para moverlo, haz clic en uno para editarlo. Los colores identifican la plataforma; el borde identifica si es orgánico, pautado o dark post.</p>
+
+        <div class="toolbar cal-toolbar">
+          <div class="cal-month-nav">
+            <button class="icon-btn" id="calPrevBtn" aria-label="Previous month">
+              <svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+            </button>
+            <h3 id="calMonthLabel">August 2026</h3>
+            <button class="icon-btn" id="calNextBtn" aria-label="Next month">
+              <svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+            </button>
+          </div>
+          <select class="cal-campaign-select" id="calCampaignFilter" aria-label="Filtrar por campaña"></select>
+          <div class="toolbar-spacer"></div>
+          <div class="filter-group" id="calBrandFilters"></div>
+          <div class="filter-group" id="calPlatformFilters"></div>
+          <button class="btn btn-primary" id="addCalPostBtn">+ Nuevo post</button>
+        </div>
+
+        <div class="cal-legend" id="calLegend"></div>
+
+        <div class="cal-grid-wrap">
+          <div class="cal-weekdays" id="calWeekdays"></div>
+          <div class="cal-grid" id="calGrid"></div>
+        </div>
+
+        <div class="panel-card cal-summary-card">
+          <div class="panel-card-head"><h3>Ritmo semanal</h3></div>
+          <p class="view-intro" style="margin-bottom:12px;">Conteo de posts por semana y por marca, para no pasarnos del ritmo sostenible con el equipo de diseño.</p>
+          <div class="cal-summary-grid" id="calSummaryGrid"></div>
+        </div>
+      </section>
+
+      <!-- ============ DIGITAL ASSETS INVENTORY ============ -->
+      <section class="view" id="view-inventory">
+        <div class="toolbar">
+          <div class="search-field">
+            <svg viewBox="0 0 24 24" class="search-icon"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M20 20l-4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <input type="text" id="inventorySearch" placeholder="Search asset, brand, or platform…">
+          </div>
+          <div class="filter-group" id="brandFilters"></div>
+          <div class="filter-group" id="statusFilters"></div>
+          <div class="toolbar-spacer"></div>
+          <button class="btn btn-ghost" id="addColumnBtn">+ Add Column</button>
+          <button class="btn btn-primary" id="addAssetBtn">+ Add Asset</button>
+        </div>
+
+        <div class="table-card">
+          <table class="data-table" id="inventoryTable">
+            <thead id="inventoryHead"></thead>
+            <tbody id="inventoryBody"></tbody>
+          </table>
+          <div class="table-empty" id="inventoryEmpty" hidden>No assets match those filters.</div>
+        </div>
+      </section>
+
+      <!-- ============ ACCESS MATRIX ============ -->
+      <section class="view" id="view-access">
+        <div class="toolbar">
+          <p class="view-intro" style="margin-bottom:0;">Click a cell to cycle its access level. Click a role name to rename it.</p>
+          <div class="toolbar-spacer"></div>
+          <button class="btn btn-ghost" id="addRoleBtn">+ Add Role</button>
+        </div>
+        <div class="table-card matrix-card">
+          <table class="data-table matrix-table" id="accessMatrixTable"></table>
+        </div>
+        <div class="legend" id="accessLegend"></div>
+      </section>
+
+      <!-- ============ PLATFORM AUDIT ============ -->
+      <section class="view" id="view-audit">
+        <div class="toolbar">
+          <div class="search-field">
+            <svg viewBox="0 0 24 24" class="search-icon"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M20 20l-4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <input type="text" id="auditSearch" placeholder="Search platform…">
+          </div>
+          <div class="toolbar-spacer"></div>
+          <button class="btn btn-primary" id="addPlatformBtn">+ Add Platform</button>
+        </div>
+        <div class="platform-audit-grid" id="platformAuditGrid"></div>
+      </section>
+
+      <!-- ============ QUICK WINS (KANBAN) ============ -->
+      <section class="view" id="view-quickwins">
+        <p class="view-intro" style="margin-bottom:14px;">El control center de todo lo que se está trabajando ahora mismo, por proyecto, para revisar de un vistazo qué ya se entregó, qué está en curso y qué sigue. Arrastra una tarjeta entre columnas para actualizar su estado, o haz clic para editarla.</p>
+        <div class="toolbar">
+          <button class="btn btn-primary" id="addQuickWinBtn">+ Nuevo ítem</button>
+        </div>
+        <div class="kanban-board">
+          <div class="kanban-column" data-status="backlog">
+            <div class="kanban-column-head"><span>Backlog</span><span class="kanban-count" id="countBacklog">0</span></div>
+            <div class="kanban-list" id="listBacklog"></div>
+          </div>
+          <div class="kanban-column" data-status="doing">
+            <div class="kanban-column-head"><span>Doing</span><span class="kanban-count" id="countDoing">0</span></div>
+            <div class="kanban-list" id="listDoing"></div>
+          </div>
+          <div class="kanban-column" data-status="done">
+            <div class="kanban-column-head"><span>Done</span><span class="kanban-count" id="countDone">0</span></div>
+            <div class="kanban-list" id="listDone"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ WEEKLY REPORTS ============ -->
+      <section class="view" id="view-reports">
+        <div class="report-tabs" id="reportTabs">
+          <button class="report-tab active" data-report="weekly">Weekly Report</button>
+          <button class="report-tab" data-report="monthly">Monthly Report</button>
+          <button class="report-tab" data-report="executive">Executive Summary</button>
+        </div>
+
+        <div class="panel-card report-panel">
+          <div class="report-toolbar">
+            <button class="btn btn-secondary" id="generateReportBtn">Generate report</button>
+            <button class="btn btn-ghost" id="printReportBtn">Print / PDF</button>
+          </div>
+          <div class="report-output" id="reportOutput">
+            <p class="report-placeholder">Click "Generate report" to build a summary from the project's current status.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ MEETING NOTES ============ -->
+      <section class="view" id="view-notes">
+        <div class="notes-layout">
+          <div class="panel-card notes-form">
+            <h3>New meeting note</h3>
+            <label class="field-label">Title</label>
+            <input type="text" id="noteTitle" class="text-input" placeholder="E.g. Kickoff — Platform Audit">
+            <label class="field-label">Date</label>
+            <input type="date" id="noteDate" class="text-input">
+            <label class="field-label">Attendees</label>
+            <input type="text" id="noteAttendees" class="text-input" placeholder="Michelle, Claudio…">
+            <label class="field-label">Agenda</label>
+            <textarea id="noteAgenda" class="text-area" rows="3" placeholder="Topics to cover…"></textarea>
+            <label class="field-label">Decisions</label>
+            <textarea id="noteDecisions" class="text-area" rows="3" placeholder="What was decided…"></textarea>
+            <label class="field-label">Action Items</label>
+            <textarea id="noteActions" class="text-area" rows="3" placeholder="Who does what, by when…"></textarea>
+            <button class="btn btn-primary" id="saveNoteBtn">Save note</button>
+          </div>
+
+          <div class="notes-list" id="notesList"></div>
+        </div>
+      </section>
+
+      <!-- ============ PROJECT TIMELINE ============ -->
+      <section class="view" id="view-timeline">
+        <div class="timeline-track" id="timelineTrack"></div>
+      </section>
+
+      <!-- ============ SETTINGS ============ -->
+      <section class="view" id="view-settings">
+        <div class="settings-grid">
+          <div class="panel-card">
+            <h3>Team</h3>
+            <div class="team-list" id="teamList"></div>
+            <button class="add-team-btn" id="addTeamBtn">+ Add Team Member</button>
+          </div>
+          <div class="panel-card">
+            <h3>Preferences</h3>
+            <div class="settings-row">
+              <div>
+                <strong>Email notifications</strong>
+                <p>Receive a weekly summary by email.</p>
+              </div>
+              <label class="toggle"><input type="checkbox" checked><span class="toggle-track"></span></label>
+            </div>
+            <div class="settings-row">
+              <div>
+                <strong>Access audit reminder</strong>
+                <p>Monthly alert to review the access matrix.</p>
+              </div>
+              <label class="toggle"><input type="checkbox" checked><span class="toggle-track"></span></label>
+            </div>
+            <div class="settings-row">
+              <div>
+                <strong>Compact mode</strong>
+                <p>Reduces spacing in tables and cards.</p>
+              </div>
+              <label class="toggle"><input type="checkbox"><span class="toggle-track"></span></label>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ DOCUMENTATION ============ -->
+      <section class="view" id="view-docs">
+        <div class="docs-layout">
+          <nav class="docs-nav" id="docsNav"></nav>
+          <div class="docs-content" id="docsContent"></div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<!-- ============ MODAL ============ -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modalBox" role="dialog" aria-modal="true">
+    <div class="modal-head">
+      <h3 id="modalTitle">Title</h3>
+      <button class="icon-btn" id="modalCloseBtn" aria-label="Close">
+        <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </button>
     </div>
-  </section>
-
-  <!-- ============ 04 THE SOLUTION ============ -->
-  <section class="panel" id="section-3" data-index="3">
-    <div class="panel-inner">
-      <div class="section-kicker reveal">
-        <span class="kicker-index">04</span>
-        <span class="kicker-label">The Solution</span>
-      </div>
-      <h2 class="section-title reveal">A governance-first operating system.</h2>
-      <p class="section-lede reveal">
-        Before optimization comes structure. This framework establishes
-        clear ownership, complete visibility, and a repeatable process for
-        every platform, every brand, every market.
-      </p>
-
-      <div class="solution-grid reveal">
-        <div class="solution-card solution-card-primary">
-          <svg viewBox="0 0 48 48" class="solution-icon"><circle cx="24" cy="24" r="21" fill="none" stroke="currentColor" stroke-width="2"/><path d="M24 14v10l7 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <h3>Audit first</h3>
-          <p>Full inventory of every asset and access point before any change is made.</p>
-        </div>
-        <div class="solution-card">
-          <svg viewBox="0 0 48 48" class="solution-icon"><rect x="8" y="8" width="32" height="32" rx="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 24h16M24 16v16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-          <h3>Centralized access</h3>
-          <p>One governed structure for administration, replacing scattered ownership.</p>
-        </div>
-        <div class="solution-card">
-          <svg viewBox="0 0 48 48" class="solution-icon"><path d="M10 38V22M24 38V10M38 38V26" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-          <h3>Measurable by design</h3>
-          <p>Tracking validated at the source, so every dashboard can be trusted.</p>
-        </div>
-        <div class="solution-card">
-          <svg viewBox="0 0 48 48" class="solution-icon"><path d="M8 24h32M28 12l12 12-12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <h3>Built to scale</h3>
-          <p>A playbook designed to extend cleanly into new brands and markets.</p>
-        </div>
-      </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="modalCancelBtn">Cancel</button>
+      <button class="btn btn-primary" id="modalSubmitBtn">Save</button>
     </div>
-  </section>
+  </div>
+</div>
 
-  <!-- ============ 05 GOVERNANCE MODEL ============ -->
-  <section class="panel panel-tint" id="section-4" data-index="4">
-    <div class="panel-inner">
-      <div class="section-kicker reveal">
-        <span class="kicker-index">05</span>
-        <span class="kicker-label">Governance Model</span>
-      </div>
-      <h2 class="section-title reveal">One chain of ownership.</h2>
-      <p class="section-lede reveal">
-        Every platform, every brand — the same clear hierarchy of
-        accountability, from strategic ownership to daily execution.
-      </p>
-
-      <div class="governance-diagram reveal" id="governanceDiagram">
-        <!-- SVG injected/inline below -->
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ 06 PLATFORMS ============ -->
-  <section class="panel" id="section-5" data-index="5">
-    <div class="panel-inner">
-      <div class="section-kicker reveal">
-        <span class="kicker-index">06</span>
-        <span class="kicker-label">Platforms</span>
-      </div>
-      <h2 class="section-title reveal">The full digital surface.</h2>
-      <p class="section-lede reveal">
-        Every platform under one governance standard — each with a
-        defined owner, access policy, and audit trail.
-      </p>
-
-      <div class="platform-grid reveal" id="platformGrid"></div>
-    </div>
-  </section>
-
-  <!-- ============ 07 DELIVERABLES ============ -->
-  <section class="panel panel-dark" id="section-6" data-index="6">
-    <div class="panel-inner">
-      <div class="section-kicker reveal">
-        <span class="kicker-index">07</span>
-        <span class="kicker-label">Deliverables</span>
-      </div>
-      <h2 class="section-title reveal">What leadership receives.</h2>
-      <p class="section-lede reveal">
-        Concrete, reviewable artifacts — not abstractions. Every deliverable
-        is built to drive a decision.
-      </p>
-
-      <div class="deliverables-list reveal">
-        <div class="deliverable-item">
-          <span class="deliverable-index">01</span>
-          <div><h4>Digital Assets Inventory</h4><p>Complete map of every account, property, and asset across Distrivalto.</p></div>
-        </div>
-        <div class="deliverable-item">
-          <span class="deliverable-index">02</span>
-          <div><h4>Access Matrix</h4><p>Who has access to what, at what level, and why.</p></div>
-        </div>
-        <div class="deliverable-item">
-          <span class="deliverable-index">03</span>
-          <div><h4>Platform Audit</h4><p>Health check of every active platform against best-practice standards.</p></div>
-        </div>
-        <div class="deliverable-item">
-          <span class="deliverable-index">04</span>
-          <div><h4>Tracking Validation</h4><p>Verified GA4, GTM, and conversion tracking across brand properties.</p></div>
-        </div>
-        <div class="deliverable-item">
-          <span class="deliverable-index">05</span>
-          <div><h4>Quick Wins</h4><p>Immediate, low-effort optimizations identified during the audit phase.</p></div>
-        </div>
-        <div class="deliverable-item">
-          <span class="deliverable-index">06</span>
-          <div><h4>Governance Playbook</h4><p>The documented standard for how access and process are maintained going forward.</p></div>
-        </div>
-        <div class="deliverable-item">
-          <span class="deliverable-index">07</span>
-          <div><h4>Roadmap</h4><p>A phased execution plan with clear milestones and measurable outcomes.</p></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ 08 ROADMAP ============ -->
-  <section class="panel" id="section-7" data-index="7">
-    <div class="panel-inner">
-      <div class="section-kicker reveal">
-        <span class="kicker-index">08</span>
-        <span class="kicker-label">Roadmap</span>
-      </div>
-      <h2 class="section-title reveal">From foundation to execution.</h2>
-      <p class="section-lede reveal">
-        A sequential path — each phase de-risks the next, so optimization
-        never outpaces governance.
-      </p>
-
-      <div class="roadmap-diagram reveal" id="roadmapDiagram"></div>
-    </div>
-  </section>
-
-  <!-- ============ 09 EXECUTIVE APPROVAL ============ -->
-  <section class="panel panel-final" id="section-8" data-index="8">
-    <div class="panel-inner approval-inner">
-      <div class="section-kicker reveal">
-        <span class="kicker-index">09</span>
-        <span class="kicker-label">Next Steps</span>
-      </div>
-      <h2 class="section-title reveal">Shall we begin?</h2>
-      <p class="section-lede reveal">
-        Once this framework is approved, execution starts immediately —
-        beginning with the digital assets inventory and platform audit,
-        followed by governance setup, quick wins, and full rollout.
-      </p>
-
-      <div class="closing-statement reveal">
-        <p>A clear structure. A clear starting point.</p>
-      </div>
-    </div>
-  </section>
-
-</main>
-
-<script src="app.js"></script>
+<script src="auth-gate.js"></script>
 </body>
 </html>

@@ -1,0 +1,171 @@
+/* ==========================================================================
+   DIGITAL MARKETING HUB — Auth Gate
+   Login individual por persona + carga de datos compartidos desde Supabase
+   antes de arrancar app.js, más suscripción en tiempo real a cambios de
+   cualquier otro miembro del equipo.
+   ========================================================================== */
+
+(function () {
+  'use strict';
+
+  var config = window.__SUPABASE_CONFIG || {};
+  var gateEl = document.getElementById('authGate');
+  var shellEl = document.querySelector('.app-shell');
+  var form = document.getElementById('authForm');
+  var emailInput = document.getElementById('authEmail');
+  var passwordInput = document.getElementById('authPassword');
+  var errorEl = document.getElementById('authError');
+  var submitBtn = form ? form.querySelector('button[type="submit"]') : null;
+
+  if (!config.url || config.url.indexOf('PASTE_YOUR') === 0) {
+    showError('El HUB todavía no tiene credenciales de Supabase configuradas. Revisa supabase-config.js.');
+    return;
+  }
+
+  var supabase = window.supabase.createClient(config.url, config.anonKey);
+  window.__hubSupabase = supabase;
+  var currentUser = null;
+  var appScriptLoaded = false;
+
+  // Vistas que un rol "contributor" (todo el equipo salvo el admin) sí
+  // puede editar, las que ya alimentan ellos mismos. Todo lo demás queda
+  // de solo lectura, reforzado también en las políticas de Supabase.
+  var TEAM_EDITABLE_KEYS = ['dmg_content_inputs_v1', 'dmg_briefs_v1', 'dmg_calendar_posts_v1'];
+  var TEAM_EDITABLE_VIEW_IDS = ['view-contentInputs', 'view-briefs', 'view-calendar'];
+  var ALL_VIEW_IDS = [
+    'view-dashboard', 'view-projects', 'view-tasks', 'view-objectives', 'view-campaigns',
+    'view-briefs', 'view-contentInputs', 'view-calendar', 'view-inventory', 'view-access',
+    'view-audit', 'view-quickwins', 'view-reports', 'view-notes', 'view-timeline',
+    'view-settings', 'view-docs',
+  ];
+
+  window.__hubCanEditKey = function (key) {
+    return window.__hubRole === 'admin' || TEAM_EDITABLE_KEYS.indexOf(key) !== -1;
+  };
+
+  function showToast(msg) {
+    var el = document.createElement('div');
+    el.className = 'hub-toast';
+    el.textContent = msg;
+    document.body.appendChild(el);
+    requestAnimationFrame(function () { el.classList.add('hub-toast-visible'); });
+    setTimeout(function () {
+      el.classList.remove('hub-toast-visible');
+      setTimeout(function () { el.remove(); }, 250);
+    }, 3200);
+  }
+
+  window.__hubDenyEdit = function () {
+    showToast('No tienes permiso para editar esta sección. Pídele acceso a Claudio si lo necesitas.');
+  };
+
+  function applyReadOnlyBanners() {
+    if (window.__hubRole === 'admin') return;
+    ALL_VIEW_IDS.forEach(function (id) {
+      if (TEAM_EDITABLE_VIEW_IDS.indexOf(id) !== -1) return;
+      var view = document.getElementById(id);
+      if (!view || view.querySelector('.hub-readonly-banner')) return;
+      var banner = document.createElement('div');
+      banner.className = 'hub-readonly-banner';
+      banner.textContent = 'Solo lectura. Los cambios en esta sección los hace el admin (Claudio).';
+      view.insertBefore(banner, view.firstChild);
+    });
+  }
+
+  function showError(msg) {
+    if (errorEl) errorEl.textContent = msg;
+  }
+
+  function setLoading(isLoading) {
+    if (!submitBtn) return;
+    submitBtn.disabled = isLoading;
+    submitBtn.textContent = isLoading ? 'Entrando…' : 'Entrar';
+  }
+
+  async function fetchAllRows() {
+    var result = await supabase.from('hub_store').select('key,value');
+    var map = {};
+    (result.data || []).forEach(function (row) { map[row.key] = row.value; });
+    return map;
+  }
+
+  function loadAppScript() {
+    if (appScriptLoaded) return;
+    appScriptLoaded = true;
+    var s = document.createElement('script');
+    s.src = 'app.js';
+    document.body.appendChild(s);
+  }
+
+  function setupRealtime() {
+    supabase
+      .channel('hub_store_changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'hub_store' }, async function () {
+        window.__HUB_REMOTE_DATA = await fetchAllRows();
+        if (window.__hubReloadAll) window.__hubReloadAll();
+        applyReadOnlyBanners();
+      })
+      .subscribe();
+  }
+
+  async function fetchRole(userId) {
+    var result = await supabase.from('profiles').select('role').eq('id', userId).single();
+    if (result.error || !result.data) return 'contributor';
+    return result.data.role || 'contributor';
+  }
+
+  async function bootHub(user) {
+    currentUser = user;
+    window.__hubCurrentUser = user;
+    window.__hubRole = await fetchRole(user.id);
+    document.body.classList.remove('role-admin', 'role-contributor');
+    document.body.classList.add('role-' + window.__hubRole);
+
+    if (gateEl) gateEl.style.display = 'none';
+    if (shellEl) shellEl.style.display = '';
+    window.__HUB_REMOTE_DATA = await fetchAllRows();
+
+    if (!appScriptLoaded) {
+      loadAppScript();
+      setupRealtime();
+    } else if (window.__hubReloadAll) {
+      window.__hubReloadAll();
+    }
+    setTimeout(applyReadOnlyBanners, 300);
+  }
+
+  // Empuja un cambio a Supabase. app.js llama a esto desde saveStore().
+  window.__hubPushToRemote = async function (key, value) {
+    if (!currentUser) return;
+    var payload = { key: key, value: value, updated_by: currentUser.email };
+    var result = await supabase.from('hub_store').upsert(payload);
+    if (result.error) {
+      console.error('No se pudo guardar en Supabase:', result.error.message);
+    }
+  };
+
+  if (form) {
+    form.addEventListener('submit', async function (evt) {
+      evt.preventDefault();
+      showError('');
+      setLoading(true);
+      var email = emailInput.value.trim();
+      var password = passwordInput.value;
+      var result = await supabase.auth.signInWithPassword({ email: email, password: password });
+      setLoading(false);
+      if (result.error) {
+        showError('No se pudo entrar: ' + result.error.message);
+        return;
+      }
+      bootHub(result.data.user);
+    });
+  }
+
+  // Si ya había sesión activa (misma computadora, visita anterior), entra directo.
+  supabase.auth.getSession().then(function (result) {
+    var session = result.data && result.data.session;
+    if (session && session.user) {
+      bootHub(session.user);
+    }
+  });
+})();

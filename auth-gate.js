@@ -13,6 +13,7 @@
   var shellEl = document.querySelector('.app-shell');
   var form = document.getElementById('authForm');
   var emailInput = document.getElementById('authEmail');
+  var passwordInput = document.getElementById('authPassword');
   var errorEl = document.getElementById('authError');
   var successEl = document.getElementById('authSuccess');
   var submitBtn = document.getElementById('authSubmitBtn');
@@ -102,11 +103,40 @@
     if (successEl) successEl.textContent = msg;
   }
 
+  function idleSubmitLabel() {
+    return (passwordInput && passwordInput.value) ? 'Entrar' : 'Enviar link de acceso';
+  }
+
   function setLoading(isLoading) {
     if (!submitBtn) return;
     submitBtn.disabled = isLoading;
-    submitBtn.textContent = isLoading ? 'Enviando…' : 'Enviar link de acceso';
+    submitBtn.textContent = isLoading ? 'Entrando…' : idleSubmitLabel();
   }
+
+  // El botón cambia de texto solo con que empieces a escribir una
+  // contraseña, para que quede claro que ese campo sí hace algo distinto.
+  if (passwordInput && submitBtn) {
+    passwordInput.addEventListener('input', function () {
+      submitBtn.textContent = idleSubmitLabel();
+    });
+  }
+
+  // Deja disponible una forma de configurar contraseña propia una vez
+  // logueado (por magic link), para no depender del link por correo en el
+  // futuro. Se corre a mano desde la consola del navegador:
+  //   window.__hubSetPassword('tu-clave-nueva')
+  window.__hubSetPassword = async function (newPassword) {
+    if (!currentUser) {
+      console.warn('Tenés que estar logueado primero para poder configurar una contraseña.');
+      return;
+    }
+    var result = await supabase.auth.updateUser({ password: newPassword });
+    if (result.error) {
+      console.error('No se pudo configurar la contraseña:', result.error.message);
+      return;
+    }
+    console.log('Listo, contraseña configurada para ' + currentUser.email + '. Ya puedes usarla en el login.');
+  };
 
   async function fetchAllRows() {
     var result = await supabase.from('hub_store').select('key,value');
@@ -175,8 +205,27 @@
       evt.preventDefault();
       showError('');
       showSuccess('');
-      setLoading(true);
       var email = emailInput.value.trim();
+      var password = passwordInput ? passwordInput.value : '';
+
+      // Si escribiste una contraseña, entra directo (sin correo, sin
+      // redirect) — útil cuando el Site URL/Redirect URLs de Supabase no
+      // está bien configurado y el link por correo no puede volver a esta
+      // misma página. Requiere haber corrido window.__hubSetPassword() una
+      // vez antes, logueado por magic link.
+      if (password) {
+        setLoading(true);
+        var pwResult = await supabase.auth.signInWithPassword({ email: email, password: password });
+        setLoading(false);
+        if (pwResult.error) {
+          showError('No se pudo entrar con esa contraseña: ' + pwResult.error.message);
+          return;
+        }
+        // onAuthStateChange (más abajo) se encarga de arrancar el HUB.
+        return;
+      }
+
+      setLoading(true);
       // Magic link: sin contraseña, Supabase manda un correo con un link
       // que al hacer clic vuelve aquí mismo ya logueado (lo captura el
       // listener de onAuthStateChange de más abajo).

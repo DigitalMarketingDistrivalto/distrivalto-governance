@@ -46,7 +46,7 @@
   // entra al banner genérico de "solo lectura" (ver TEAM_EDITABLE_VIEW_IDS
   // arriba); en vez de eso, applyReadOnlyBanners() le pone el aviso solo a
   // esos cuatro sub-paneles de catálogo.
-  var AF_READONLY_PANEL_IDS = ['afPanel-catalog', 'afPanel-trade', 'afPanel-brand', 'afPanel-mediakit'];
+  var AF_READONLY_PANEL_IDS = ['afPanel-catalog', 'afPanel-trade', 'afPanel-brand', 'afPanel-mediakit', 'afPanel-packs'];
   var ALL_VIEW_IDS = [
     'view-dashboard', 'view-projects', 'view-tasks', 'view-objectives', 'view-campaigns',
     'view-activationFramework', 'view-briefs', 'view-contentInputs', 'view-calendar', 'view-inventory', 'view-access',
@@ -71,7 +71,7 @@
   }
 
   window.__hubDenyEdit = function () {
-    showToast('No tienes permiso para editar esta sección. Pídele acceso a Claudio si lo necesitas.');
+    showToast('No tienes permiso para editar esta sección. Pídele acceso al Digital Marketing Specialist si lo necesitas.');
   };
 
   function applyReadOnlyBanners() {
@@ -82,7 +82,7 @@
       if (!view || view.querySelector('.hub-readonly-banner')) return;
       var banner = document.createElement('div');
       banner.className = 'hub-readonly-banner';
-      banner.textContent = 'Solo lectura. Los cambios en esta sección los hace el admin (Claudio).';
+      banner.textContent = 'Solo lectura. Los cambios en esta sección los hace el Digital Marketing Specialist.';
       view.insertBefore(banner, view.firstChild);
     });
     AF_READONLY_PANEL_IDS.forEach(function (id) {
@@ -90,7 +90,7 @@
       if (!panel || panel.querySelector('.hub-readonly-banner')) return;
       var banner = document.createElement('div');
       banner.className = 'hub-readonly-banner';
-      banner.textContent = 'Solo lectura. Estos catálogos (Digital, Trade, Brand, Media Kit) los actualiza el admin (Claudio); el Registro de Campañas sí lo puede editar todo el equipo.';
+      banner.textContent = 'Solo lectura. Estos catálogos (Digital, Trade, Brand, Media Kit) los actualiza el Digital Marketing Specialist; el Registro de Campañas sí lo puede editar todo el equipo.';
       panel.insertBefore(banner, panel.firstChild);
     });
   }

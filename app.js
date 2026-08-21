@@ -181,11 +181,11 @@
     { category: 'Content & Social', activation: 'Post / Contenido Estático', formatOptions: ['Orgánico', 'Dark Post', 'Orgánico + Pauta'], format: 'Orgánico', measurement: 'Reach, engagement' },
     { category: 'Content & Social', activation: 'Short-form Video / Reel', formatOptions: ['Orgánico', 'Dark Post', 'Orgánico + Pauta'], format: 'Orgánico', measurement: 'Views, engagement' },
     { category: 'Content & Social', activation: 'Stories', formatOptions: ['Orgánico', 'Dark Post'], format: 'Orgánico', measurement: 'Views, taps' },
-    { category: 'Content & Social', activation: 'UGC / Creator Content', formatOptions: ['Orgánico', 'Whitelisting'], format: 'Orgánico', measurement: 'Engagement, saves' },
+    { category: 'Content & Social', activation: 'Video UGC / Influencer Content', formatOptions: ['Orgánico', 'Whitelisting'], format: 'Orgánico', measurement: 'Engagement, saves' },
     { category: 'Content & Social', activation: 'Recipe / Use-Case Content', formatOptions: ['Orgánico', 'Dark Post'], format: 'Orgánico', measurement: 'Engagement, saves' },
     { category: 'Content & Social', activation: 'Product Education Content', formatOptions: ['Orgánico', 'Dark Post'], format: 'Orgánico', measurement: 'Engagement, retention' },
     { category: 'TikTok', activation: 'Video desde la página de la marca', formatOptions: ['Orgánico', 'Pautado'], format: 'Orgánico', measurement: 'Views, CTR' },
-    { category: 'TikTok', activation: 'Video influencer (perfil del creador)', formatOptions: ['Orgánico', 'Whitelisting'], format: 'Orgánico', measurement: 'Engagement, CTR' },
+    { category: 'TikTok', activation: 'Video UGC / Influencer (Perfil del Creador)', formatOptions: ['Orgánico', 'Whitelisting'], format: 'Orgánico', measurement: 'Engagement, CTR' },
     { category: 'Paid Media', activation: 'Meta Ads (gestión de pauta)', formatOptions: ['Pautado'], format: 'Pautado', measurement: 'CPM, CTR, ROAS' },
     { category: 'Paid Media', activation: 'Google Display / YouTube', formatOptions: ['Pautado'], format: 'Pautado', measurement: 'Impressions, CTR' },
     { category: 'Email / CRM', activation: 'Newsletter Feature (HubSpot, lista propia)', formatOptions: ['Orgánico'], format: 'Orgánico', measurement: 'Open rate, CTR, revenue' },
@@ -247,7 +247,7 @@
   // El campaign builder usa "activation" para pre-marcar los checkboxes de
   // cada catálogo cuando se elige el pack, y "format" para pre-llenar el
   // Formato de las filas de Digital que lo tengan.
-  const AF_PACKS = [
+  const RAW_AF_PACKS = [
     {
       name: 'LAUNCH PACK',
       useCase: 'Lanzamiento de producto o SKU nuevo',
@@ -258,7 +258,7 @@
       ],
       digital: [
         { activation: 'Short-form Video / Reel', format: 'Orgánico + Pauta', note: 'presenta el producto al mercado' },
-        { activation: 'UGC / Creator Content', format: 'Whitelisting', note: 'voces externas que le dan credibilidad' },
+        { activation: 'Video UGC / Influencer Content', format: 'Whitelisting', note: 'voces externas que le dan credibilidad' },
         { activation: 'Meta Ads (gestión de pauta)', format: 'Pautado', note: 'enfoque Awareness' },
         { activation: 'Product Education Content', format: 'Orgánico', note: 'explica cómo se usa' },
       ],
@@ -314,7 +314,7 @@
       digital: [
         { activation: 'Meta Ads (gestión de pauta)', format: 'Pautado', note: 'Awareness + Conversion' },
         { activation: 'Short-form Video / Reel', format: 'Orgánico + Pauta', note: '' },
-        { activation: 'UGC / Creator Content', format: 'Whitelisting', note: '' },
+        { activation: 'Video UGC / Influencer Content', format: 'Whitelisting', note: '' },
         { activation: 'Video desde la página de la marca', format: 'Pautado', note: 'TikTok de marca' },
         { activation: 'Newsletter Feature (HubSpot, lista propia)', format: 'Orgánico', note: '' },
       ],
@@ -326,6 +326,19 @@
       mediaKitSuggestion: 'Homepage Banner + Category Banner + Sponsored Search + Newsletter Placement del retailer',
     },
   ];
+
+  // Cada pack e item de pack necesita un id estable (para poder editar y
+  // borrar desde la UI); los datos de arriba no lo tienen a mano porque son
+  // más fáciles de leer sin ids de por medio, así que se agregan aquí.
+  const DEFAULT_AF_PACKS = RAW_AF_PACKS.map((p) => ({
+    id: uid('pack'),
+    name: p.name,
+    useCase: p.useCase,
+    brand: (p.brand || []).map((it) => ({ id: uid('pit'), ...it })),
+    digital: (p.digital || []).map((it) => ({ id: uid('pit'), ...it })),
+    trade: (p.trade || []).map((it) => ({ id: uid('pit'), ...it })),
+    mediaKitSuggestion: p.mediaKitSuggestion || '',
+  }));
 
   // ---- Retailer Media Kit ----
   const DEFAULT_AF_MEDIAKIT_COLUMNS = [
@@ -1144,6 +1157,7 @@
     afTrade: 'dmg_af_trade_v1',
     afBrandColumns: 'dmg_af_brand_columns_v1',
     afBrand: 'dmg_af_brand_v1',
+    afPacks: 'dmg_af_packs_v2',
     afCampaigns: 'dmg_af_campaigns_v1',
   };
 
@@ -1201,6 +1215,7 @@
   let afTrade = loadStore(STORE_KEYS.afTrade, DEFAULT_AF_TRADE);
   let afBrandColumns = loadStore(STORE_KEYS.afBrandColumns, DEFAULT_AF_BRAND_COLUMNS);
   let afBrand = loadStore(STORE_KEYS.afBrand, DEFAULT_AF_BRAND);
+  let afPacks = loadStore(STORE_KEYS.afPacks, DEFAULT_AF_PACKS);
   let afCampaigns = loadStore(STORE_KEYS.afCampaigns, DEFAULT_AF_CAMPAIGNS);
 
   function persistPlatforms() { saveStore(STORE_KEYS.platforms, platforms); }
@@ -1230,6 +1245,7 @@
   function persistAFTrade() { saveStore(STORE_KEYS.afTrade, afTrade); }
   function persistAFBrandColumns() { saveStore(STORE_KEYS.afBrandColumns, afBrandColumns); }
   function persistAFBrand() { saveStore(STORE_KEYS.afBrand, afBrand); }
+  function persistAFPacks() { saveStore(STORE_KEYS.afPacks, afPacks); }
   function persistAFCampaigns() { saveStore(STORE_KEYS.afCampaigns, afCampaigns); }
 
   function defaultAccessRow() {
@@ -1625,12 +1641,52 @@
       if (col.type === 'rowSelect') {
         // Las opciones válidas vienen del propio row (col.optionsKey), no de
         // una lista global de la columna, porque cada fila del catálogo
-        // tiene su propio menú de formatos válidos.
+        // tiene su propio menú de formatos válidos. Además de elegir un
+        // valor, se puede editar la lista de opciones válidas de esa fila
+        // en particular con el lapicito de al lado.
         const rowOptions = row[col.optionsKey] || col.defaultOptions || ['—'];
         const optsHtml = rowOptions.map((o) => `<option value="${escapeHtml(o)}" ${o === value ? 'selected' : ''}>${escapeHtml(o)}</option>`).join('');
-        return `<td><select class="cell-select" data-id="${row.id}" data-key="${col.key}">${optsHtml}</select></td>`;
+        return `<td><div class="cell-with-inline-edit">
+          <select class="cell-select" data-id="${row.id}" data-key="${col.key}">${optsHtml}</select>
+          <button class="icon-btn icon-btn-tiny" data-edit-row-options="${row.id}" data-options-key="${col.optionsKey}" title="Editar opciones de esta fila" aria-label="Editar opciones de esta fila">
+            <svg viewBox="0 0 24 24"><path d="M4 20l4-1 11-11-3-3L5 16l-1 4z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div></td>`;
       }
       return `<td contenteditable="true" data-id="${row.id}" data-key="${col.key}">${escapeHtml(value)}</td>`;
+    }
+
+    function editColumn(col) {
+      const newLabel = prompt('Nombre de la columna:', col.label);
+      if (newLabel === null) return;
+      if (!newLabel.trim()) { alert('El nombre no puede quedar vacío.'); return; }
+      col.label = newLabel.trim();
+
+      const isDropdownNow = col.type === 'select' || col.type === 'rowSelect';
+      const typeAnswer = prompt('Tipo de columna — escribe "texto" para campo libre o "dropdown" para lista desplegable:', isDropdownNow ? 'dropdown' : 'texto');
+      if (typeAnswer === null) return;
+      const wantsDropdown = typeAnswer.trim().toLowerCase().indexOf('drop') === 0
+        || typeAnswer.trim().toLowerCase().indexOf('lista') === 0
+        || typeAnswer.trim().toLowerCase().indexOf('menu') === 0;
+
+      if (wantsDropdown) {
+        const existingOptions = col.type === 'select' ? (col.options || []) : (col.defaultOptions || []);
+        const optionsRaw = prompt('Opciones separadas por coma:', existingOptions.join(', '));
+        if (optionsRaw === null) return;
+        const options = optionsRaw.split(',').map((s) => s.trim()).filter(Boolean);
+        if (!options.length) { alert('Escribe al menos una opción.'); return; }
+        col.type = 'select';
+        col.options = options;
+        delete col.optionsKey;
+        delete col.defaultOptions;
+        opts.getRows().forEach((r) => { if (options.indexOf(r[col.key]) === -1) r[col.key] = options[0]; });
+      } else {
+        col.type = 'text';
+        delete col.options;
+        delete col.optionsKey;
+        delete col.defaultOptions;
+        delete col.colorMap;
+      }
     }
 
     function renderHead() {
@@ -1641,13 +1697,26 @@
         <th>
           <div class="th-with-action">
             <span class="th-label">${escapeHtml(c.label)}</span>
-            ${!c.core ? `<button class="icon-btn" data-delete-col="${c.key}" aria-label="Delete column"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>` : ''}
+            <button class="icon-btn" data-edit-col="${c.key}" aria-label="Editar columna" title="Editar columna">
+              <svg viewBox="0 0 24 24"><path d="M4 20l4-1 11-11-3-3L5 16l-1 4z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <button class="icon-btn" data-delete-col="${c.key}" aria-label="Eliminar columna" title="Eliminar columna">
+              <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </button>
           </div>
         </th>`).join('')}<th></th></tr>`;
 
+      thead.querySelectorAll('[data-edit-col]').forEach((btn) => btn.addEventListener('click', () => {
+        const col = opts.getColumns().find((c) => c.key === btn.dataset.editCol);
+        if (!col) return;
+        editColumn(col);
+        opts.persistColumns(); opts.persistRows();
+        renderHead(); renderTable();
+      }));
+
       thead.querySelectorAll('[data-delete-col]').forEach((btn) => btn.addEventListener('click', () => {
         const key = btn.dataset.deleteCol;
-        if (!confirm('Delete this column? This removes it from every row.')) return;
+        if (!confirm('¿Eliminar esta columna? Se borra de todas las filas.')) return;
         opts.setColumns(opts.getColumns().filter((c) => c.key !== key));
         opts.getRows().forEach((r) => { delete r[key]; });
         opts.persistColumns(); opts.persistRows();
@@ -1701,9 +1770,26 @@
       });
 
       body.addEventListener('click', (e) => {
+        const editBtn = e.target.closest('[data-edit-row-options]');
+        if (editBtn) {
+          const row = opts.getRows().find((r) => r.id === editBtn.dataset.editRowOptions);
+          if (!row) return;
+          const key = editBtn.dataset.optionsKey;
+          const col = opts.getColumns().find((c) => c.optionsKey === key);
+          const current = row[key] || (col && col.defaultOptions) || [];
+          const raw = prompt('Opciones válidas para esta fila, separadas por coma:', current.join(', '));
+          if (raw === null) return;
+          const newOptions = raw.split(',').map((s) => s.trim()).filter(Boolean);
+          if (!newOptions.length) { alert('Escribe al menos una opción.'); return; }
+          row[key] = newOptions;
+          if (col && newOptions.indexOf(row[col.key]) === -1) row[col.key] = newOptions[0];
+          opts.persistRows();
+          renderTable();
+          return;
+        }
         const btn = e.target.closest('[data-delete-row]');
         if (!btn) return;
-        if (!confirm('Delete this row?')) return;
+        if (!confirm('¿Eliminar esta fila?')) return;
         opts.setRows(opts.getRows().filter((r) => r.id !== btn.dataset.deleteRow));
         opts.persistRows();
         renderTable();
@@ -1803,30 +1889,133 @@
   function renderAFTrade() { afTradeController.renderHead(); afTradeController.renderTable(); }
   function renderAFBrand() { afBrandController.renderHead(); afBrandController.renderTable(); }
 
+  function afPackFindItemArray(pack, areaKey) {
+    if (areaKey === 'brand') return pack.brand;
+    if (areaKey === 'digital') return pack.digital;
+    if (areaKey === 'trade') return pack.trade;
+    return null;
+  }
+
   function renderAFPacks() {
     const grid = document.getElementById('afPackGrid');
     if (!grid) return;
-    const areaBlock = (label, items) => {
-      if (!items || !items.length) return '';
+
+    const areaBlock = (label, packId, areaKey, items, withFormat) => {
+      const rows = items || [];
       return `
         <div class="af-pack-area">
-          <div class="af-pack-area-label">${escapeHtml(label)}</div>
-          <ul class="af-pack-list">
-            ${items.map((it) => `<li><b>${escapeHtml(it.activation)}</b>${it.format ? ` <span class="af-pack-format">(${escapeHtml(it.format)})</span>` : ''}${it.note ? ` — ${escapeHtml(it.note)}` : ''}</li>`).join('')}
-          </ul>
+          <div class="af-pack-area-label">
+            <span>${escapeHtml(label)}</span>
+            <button class="icon-btn icon-btn-tiny" data-pack-add-item="${packId}" data-pack-area="${areaKey}" title="Agregar item">
+              <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+          ${!rows.length ? `<p class="af-builder-empty">Sin items todavía.</p>` : `
+          <ul class="af-pack-list af-pack-list-editable">
+            ${rows.map((it) => `
+              <li data-pack-item="${it.id}">
+                <span class="af-pack-item-name" contenteditable="true" data-pack-item-field="activation" data-pack-item="${it.id}" data-pack-id="${packId}" data-pack-area="${areaKey}">${escapeHtml(it.activation || '')}</span>
+                ${withFormat ? `<span class="af-pack-format af-pack-item-format" contenteditable="true" data-pack-item-field="format" data-pack-item="${it.id}" data-pack-id="${packId}" data-pack-area="${areaKey}" title="Formato sugerido">${escapeHtml(it.format || '')}</span>` : ''}
+                <span class="af-pack-item-note" contenteditable="true" data-pack-item-field="note" data-pack-item="${it.id}" data-pack-id="${packId}" data-pack-area="${areaKey}" title="Nota">${escapeHtml(it.note || '')}</span>
+                <button class="icon-btn icon-btn-tiny" data-pack-delete-item="${it.id}" data-pack-id="${packId}" data-pack-area="${areaKey}" title="Eliminar item" aria-label="Eliminar item">
+                  <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                </button>
+              </li>`).join('')}
+          </ul>`}
         </div>`;
     };
-    grid.innerHTML = AF_PACKS.map((p) => `
+
+    grid.innerHTML = afPacks.map((p) => `
       <div class="panel-card af-pack-card">
-        <h3>${escapeHtml(p.name)}</h3>
-        <p class="view-intro" style="font-style:italic; margin-bottom:10px;">${escapeHtml(p.useCase)}</p>
-        ${areaBlock('Brand', p.brand)}
-        ${areaBlock('Digital', p.digital)}
-        ${areaBlock('Trade', p.trade)}
-        ${p.mediaKitSuggestion ? `<div class="af-pack-area"><div class="af-pack-area-label">Media Kit sugerido</div><p class="af-pack-mediakit">${escapeHtml(p.mediaKitSuggestion)}</p></div>` : ''}
+        <div class="af-pack-card-head">
+          <h3 contenteditable="true" data-pack-field="name" data-pack-id="${p.id}">${escapeHtml(p.name)}</h3>
+          <button class="icon-btn" data-delete-pack="${p.id}" title="Eliminar pack" aria-label="Eliminar pack">
+            <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+        <p class="view-intro af-pack-usecase" contenteditable="true" data-pack-field="useCase" data-pack-id="${p.id}" style="font-style:italic; margin-bottom:10px;">${escapeHtml(p.useCase || '')}</p>
+        ${areaBlock('Brand', p.id, 'brand', p.brand, false)}
+        ${areaBlock('Digital', p.id, 'digital', p.digital, true)}
+        ${areaBlock('Trade', p.id, 'trade', p.trade, false)}
+        <div class="af-pack-area">
+          <div class="af-pack-area-label"><span>Media Kit sugerido</span></div>
+          <p class="af-pack-mediakit" contenteditable="true" data-pack-field="mediaKitSuggestion" data-pack-id="${p.id}">${escapeHtml(p.mediaKitSuggestion || '')}</p>
+        </div>
       </div>
     `).join('');
+
+    // ---- edición inline de campos del pack (nombre, use case, media kit) ----
+    grid.querySelectorAll('[contenteditable][data-pack-field]').forEach((el) => {
+      el.addEventListener('focusout', () => {
+        const pack = afPacks.find((p) => p.id === el.dataset.packId);
+        if (!pack) return;
+        pack[el.dataset.packField] = el.textContent.trim();
+        persistAFPacks();
+      });
+    });
+
+    // ---- edición inline de campos de un item (activation / format / note) ----
+    grid.querySelectorAll('[contenteditable][data-pack-item-field]').forEach((el) => {
+      el.addEventListener('focusout', () => {
+        const pack = afPacks.find((p) => p.id === el.dataset.packId);
+        if (!pack) return;
+        const arr = afPackFindItemArray(pack, el.dataset.packArea);
+        const item = arr && arr.find((it) => it.id === el.dataset.packItem);
+        if (!item) return;
+        item[el.dataset.packItemField] = el.textContent.trim();
+        persistAFPacks();
+      });
+    });
+
+    // ---- agregar / eliminar item dentro de un área ----
+    grid.querySelectorAll('[data-pack-add-item]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const pack = afPacks.find((p) => p.id === btn.dataset.packAddItem);
+        if (!pack) return;
+        const arr = afPackFindItemArray(pack, btn.dataset.packArea);
+        if (!arr) return;
+        arr.push({ id: uid('pit'), activation: 'Nueva acción', format: '', note: '' });
+        persistAFPacks();
+        renderAFPacks();
+      });
+    });
+    grid.querySelectorAll('[data-pack-delete-item]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        if (!confirm('¿Eliminar este item del pack?')) return;
+        const pack = afPacks.find((p) => p.id === btn.dataset.packId);
+        if (!pack) return;
+        const arr = afPackFindItemArray(pack, btn.dataset.packArea);
+        if (!arr) return;
+        const idx = arr.findIndex((it) => it.id === btn.dataset.packDeleteItem);
+        if (idx !== -1) arr.splice(idx, 1);
+        persistAFPacks();
+        renderAFPacks();
+      });
+    });
+
+    // ---- eliminar pack completo ----
+    grid.querySelectorAll('[data-delete-pack]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        if (!confirm('¿Eliminar este pack completo? Esto no borra ninguna campaña ya guardada que lo haya usado.')) return;
+        afPacks = afPacks.filter((p) => p.id !== btn.dataset.deletePack);
+        persistAFPacks();
+        renderAFPacks();
+      });
+    });
   }
+
+  const afPackAddBtn = document.getElementById('afPackAddBtn');
+  if (afPackAddBtn) afPackAddBtn.addEventListener('click', () => {
+    afPacks.push({
+      id: uid('pack'),
+      name: 'Nuevo Pack',
+      useCase: 'Describe acá cuándo usar este pack…',
+      brand: [], digital: [], trade: [],
+      mediaKitSuggestion: '',
+    });
+    persistAFPacks();
+    renderAFPacks();
+  });
 
   /* ------------------------------------------------------------------------
      REGISTRO DE CAMPAÑAS — banco + builder ("Crear Nueva Campaña")
@@ -1841,14 +2030,21 @@
   let afBuilderState = null; // { editingId, name, country, retailer, packUsed, digital: {activation: format|true}, trade: Set, brand: Set, mediaKit: {item: source}, observations }
   let afCampaignSearchState = '';
 
+  // Los países/retailers salen del Media Kit + de los que ya se usaron en
+  // campañas anteriores, así un país o retailer sin Media Kit cargado (que
+  // se agregó a mano una vez desde el builder) queda disponible para elegir
+  // de nuevo la próxima vez, sin depender de que Media Kit lo tenga.
   function afCountryOptions() {
     const fromKit = afMediaKit.map((r) => r.country).filter(Boolean);
-    return Array.from(new Set(fromKit)).sort();
+    const fromCampaigns = afCampaigns.map((c) => c.country).filter(Boolean);
+    return Array.from(new Set([...fromKit, ...fromCampaigns])).sort();
   }
 
   function afRetailerOptionsForCountry(country) {
-    const rows = afMediaKit.filter((r) => r.country === country);
-    return Array.from(new Set(rows.map((r) => r.retailer).filter(Boolean)));
+    if (!country) return [];
+    const fromKit = afMediaKit.filter((r) => r.country === country).map((r) => r.retailer);
+    const fromCampaigns = afCampaigns.filter((c) => c.country === country).map((c) => c.retailer);
+    return Array.from(new Set([...fromKit, ...fromCampaigns].filter(Boolean)));
   }
 
   function afMediaKitRowsForRetailer(retailer) {
@@ -1856,7 +2052,7 @@
     return afMediaKit.filter((r) => r.retailer === retailer);
   }
 
-  function findAFPack(name) { return AF_PACKS.find((p) => p.name === name); }
+  function findAFPack(name) { return afPacks.find((p) => p.name === name); }
 
   function freshBuilderState() {
     return {
@@ -1864,6 +2060,7 @@
       name: '',
       country: '',
       retailer: '',
+      startDate: '',
       packUsed: '',
       digital: {},
       trade: {},
@@ -1916,13 +2113,18 @@
     const s = afBuilderState;
     const countries = afCountryOptions();
     const retailers = afRetailerOptionsForCountry(s.country);
+    // Si el país/retailer de esta campaña es uno recién escrito a mano (no
+    // está todavía ni en Media Kit ni en ninguna otra campaña), lo agregamos
+    // igual a la lista para que el select lo muestre seleccionado.
+    const countryOptions = (s.country && countries.indexOf(s.country) === -1) ? [...countries, s.country] : countries;
+    const retailerOptions = (s.retailer && retailers.indexOf(s.retailer) === -1) ? [...retailers, s.retailer] : retailers;
     const mediaKitRows = afMediaKitRowsForRetailer(s.retailer);
 
     document.getElementById('afBuilderTitle').textContent = s.editingId ? 'Editar Campaña' : 'Nueva Campaña';
 
     body.innerHTML = `
       <div class="af-builder-step-label">Datos generales</div>
-      <div class="brief-form-grid" style="grid-template-columns: repeat(3, 1fr);">
+      <div class="brief-form-grid" style="grid-template-columns: repeat(4, 1fr);">
         <div class="field-group">
           <label class="field-label">Nombre de la campaña</label>
           <input type="text" class="text-input" id="afFormName" value="${escapeHtml(s.name)}" placeholder="Ej. Heritage Month 2026 — Arepa Maker">
@@ -1931,22 +2133,28 @@
           <label class="field-label">País</label>
           <select class="text-input" id="afFormCountry">
             <option value="">Elegir país…</option>
-            ${countries.map((c) => `<option value="${escapeHtml(c)}" ${c === s.country ? 'selected' : ''}>${escapeHtml(c)}</option>`).join('')}
+            ${countryOptions.map((c) => `<option value="${escapeHtml(c)}" ${c === s.country ? 'selected' : ''}>${escapeHtml(c)}</option>`).join('')}
+            <option value="__new_country__">+ Agregar país nuevo…</option>
           </select>
         </div>
         <div class="field-group">
           <label class="field-label">Retailer</label>
           <select class="text-input" id="afFormRetailer" ${!s.country ? 'disabled' : ''}>
             <option value="">${s.country ? 'Elegir retailer…' : 'Elegí un país primero'}</option>
-            ${retailers.map((r) => `<option value="${escapeHtml(r)}" ${r === s.retailer ? 'selected' : ''}>${escapeHtml(r)}</option>`).join('')}
+            ${retailerOptions.map((r) => `<option value="${escapeHtml(r)}" ${r === s.retailer ? 'selected' : ''}>${escapeHtml(r)}</option>`).join('')}
+            ${s.country ? `<option value="__new_retailer__">+ Agregar retailer nuevo…</option>` : ''}
           </select>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Inicio de campaña</label>
+          <input type="date" class="text-input" id="afFormStartDate" value="${escapeHtml(s.startDate || '')}">
         </div>
       </div>
 
       <div class="af-builder-step-label">Pack o Campaña Personalizada</div>
       <p class="af-builder-hint">Elegí un Pack como punto de partida (se marcan sus acciones sugeridas abajo, y las puedes ajustar libremente) o "Campaña Personalizada" para armar todo desde cero.</p>
       <div class="af-pack-picker">
-        ${AF_PACKS.map((p) => `
+        ${afPacks.map((p) => `
           <div class="af-pack-choice ${s.packUsed === p.name ? 'selected' : ''}" data-af-pack-choice="${escapeHtml(p.name)}">
             <div class="af-pack-choice-name">${escapeHtml(p.name)}</div>
             <div class="af-pack-choice-desc">${escapeHtml(p.useCase)}</div>
@@ -2000,16 +2208,29 @@
     // ---- wiring ----
     document.getElementById('afFormName').addEventListener('input', (e) => { s.name = e.target.value; });
     document.getElementById('afFormCountry').addEventListener('change', (e) => {
-      s.country = e.target.value;
+      if (e.target.value === '__new_country__') {
+        const typed = prompt('Nombre del país nuevo:');
+        if (!typed || !typed.trim()) { renderBuilderBody(); return; }
+        s.country = typed.trim();
+      } else {
+        s.country = e.target.value;
+      }
       s.retailer = '';
       s.mediaKit = {};
       renderBuilderBody();
     });
     document.getElementById('afFormRetailer').addEventListener('change', (e) => {
-      s.retailer = e.target.value;
+      if (e.target.value === '__new_retailer__') {
+        const typed = prompt('Nombre del retailer nuevo para ' + s.country + ':');
+        if (!typed || !typed.trim()) { renderBuilderBody(); return; }
+        s.retailer = typed.trim();
+      } else {
+        s.retailer = e.target.value;
+      }
       s.mediaKit = {};
       renderBuilderBody();
     });
+    document.getElementById('afFormStartDate').addEventListener('change', (e) => { s.startDate = e.target.value; });
     document.getElementById('afFormObservations').addEventListener('input', (e) => { s.observations = e.target.value; });
 
     body.querySelectorAll('[data-af-pack-choice]').forEach((el) => {
@@ -2069,6 +2290,7 @@
         name: existingCampaign.name,
         country: existingCampaign.country,
         retailer: existingCampaign.retailer,
+        startDate: existingCampaign.startDate || '',
         packUsed: existingCampaign.packUsed,
         digital: {}, trade: {}, brand: {}, mediaKit: {},
         observations: existingCampaign.observations || '',
@@ -2112,6 +2334,7 @@
         existing.name = s.name.trim();
         existing.country = s.country;
         existing.retailer = s.retailer;
+        existing.startDate = s.startDate || '';
         existing.packUsed = s.packUsed || 'Campaña Personalizada';
         existing.digitalActions = digitalActions;
         existing.tradeActions = tradeActions;
@@ -2125,6 +2348,7 @@
         name: s.name.trim(),
         country: s.country,
         retailer: s.retailer,
+        startDate: s.startDate || '',
         packUsed: s.packUsed || 'Campaña Personalizada',
         digitalActions, tradeActions, brandActions, mediaKitItems,
         observations: s.observations,
@@ -2135,6 +2359,16 @@
     persistAFCampaigns();
     closeCampaignBuilder();
     renderAFCampaignBank();
+  }
+
+  function afFormatDate(iso) {
+    if (!iso) return '—';
+    // El input type="date" entrega "YYYY-MM-DD"; se parsea a mano en vez de
+    // con `new Date(iso)` para no arrastrar corrimiento de zona horaria.
+    const parts = iso.split('-');
+    if (parts.length !== 3) return iso;
+    const d = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+    return d.toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' });
   }
 
   function afCampaignStatusChipClass(status) {
@@ -2165,6 +2399,7 @@
             ${['Pending', 'Approved', 'Proposal'].map((st) => `<option value="${st}" ${st === c.status ? 'selected' : ''}>${st}</option>`).join('')}
           </select>
         </td>
+        <td>${afFormatDate(c.startDate)}</td>
         <td>${escapeHtml(c.date || '')}</td>
         <td class="af-campaign-actions-cell">
           <button class="icon-btn" data-af-view-campaign="${c.id}" aria-label="Ver / Editar" title="Ver / Editar"><svg viewBox="0 0 24 24"><path d="M4 12s3.5-6 8-6 8 6 8 6-3.5 6-8 6-8-6-8-6z" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="2.4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
@@ -2206,7 +2441,7 @@
     if (!area) return;
     area.innerHTML = `
       <div class="af-print-title">${escapeHtml(campaign.name)}</div>
-      <div class="af-print-sub">${escapeHtml(campaign.country)} · ${escapeHtml(campaign.retailer)} · ${escapeHtml(campaign.packUsed)} · Estado: ${escapeHtml(campaign.status)} · ${escapeHtml(campaign.date || '')}</div>
+      <div class="af-print-sub">${escapeHtml(campaign.country)} · ${escapeHtml(campaign.retailer)} · ${escapeHtml(campaign.packUsed)} · Estado: ${escapeHtml(campaign.status)} · Inicio: ${afFormatDate(campaign.startDate)} · Creada: ${escapeHtml(campaign.date || '')}</div>
 
       <div class="af-campaign-detail-section-label">Acciones Digital</div>
       ${afListOrEmpty(campaign.digitalActions, (it) => `${escapeHtml(it.activation)}${it.format ? ` — ${escapeHtml(it.format)}` : ''}`)}
@@ -4328,6 +4563,7 @@
     afTrade = loadStore(STORE_KEYS.afTrade, DEFAULT_AF_TRADE);
     afBrandColumns = loadStore(STORE_KEYS.afBrandColumns, DEFAULT_AF_BRAND_COLUMNS);
     afBrand = loadStore(STORE_KEYS.afBrand, DEFAULT_AF_BRAND);
+    afPacks = loadStore(STORE_KEYS.afPacks, DEFAULT_AF_PACKS);
     afCampaigns = loadStore(STORE_KEYS.afCampaigns, DEFAULT_AF_CAMPAIGNS);
     renderAll();
   }

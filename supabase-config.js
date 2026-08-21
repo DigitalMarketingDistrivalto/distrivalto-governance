@@ -13,6 +13,6 @@
    ========================================================================== */
 
 window.__SUPABASE_CONFIG = {
-  url: 'https://olthphuawthjhsubjrld.supabase.co',
-  anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9sdGhwaHVhd3RoamhzdWJqcmxkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY1Mzg1MDEsImV4cCI6MjEwMjExNDUwMX0.ijPDxP9aItcQEWXJ9IovBdfUK8GGomyJ7Y_b8WiZpF8',
+  url: 'https://awaxznltzawstpslpflp.supabase.co',
+  anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF3YXh6bmx0emF3c3Rwc2xwZmxwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcwNzUwODIsImV4cCI6MjEwMjY1MTA4Mn0.qMgpOk--A3uS3YiV2VywoDFm-9IrvDVIOjCg5iC0KH0',
 };

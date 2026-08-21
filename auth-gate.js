@@ -30,11 +30,25 @@
   // Vistas que un rol "contributor" (todo el equipo salvo el admin) sí
   // puede editar, las que ya alimentan ellos mismos. Todo lo demás queda
   // de solo lectura, reforzado también en las políticas de Supabase.
-  var TEAM_EDITABLE_KEYS = ['dmg_content_inputs_v1', 'dmg_briefs_v1', 'dmg_calendar_posts_v1'];
-  var TEAM_EDITABLE_VIEW_IDS = ['view-contentInputs', 'view-briefs', 'view-calendar'];
+  // Los catálogos del Activation Framework (Digital, Trade, Brand, Media
+  // Kit) quedan de solo lectura para el equipo (los administra Claudio, como
+  // el Inventory), pero el Registro de Campañas sí es de todo el equipo:
+  // ahí es donde se arman y quedan registradas las campañas reales.
+  var TEAM_EDITABLE_KEYS = [
+    'dmg_content_inputs_v1', 'dmg_briefs_v1', 'dmg_calendar_posts_v1',
+    'dmg_af_campaigns_v1',
+  ];
+  var TEAM_EDITABLE_VIEW_IDS = ['view-contentInputs', 'view-briefs', 'view-calendar', 'view-activationFramework'];
+  // Dentro de view-activationFramework hay tabs mixtos: Digital/Trade/Brand/
+  // Media Kit quedan de solo lectura para el equipo, Packs es estático, y
+  // Registro de Campañas es editable por todos. Por eso la vista completa no
+  // entra al banner genérico de "solo lectura" (ver TEAM_EDITABLE_VIEW_IDS
+  // arriba); en vez de eso, applyReadOnlyBanners() le pone el aviso solo a
+  // esos cuatro sub-paneles de catálogo.
+  var AF_READONLY_PANEL_IDS = ['afPanel-catalog', 'afPanel-trade', 'afPanel-brand', 'afPanel-mediakit'];
   var ALL_VIEW_IDS = [
     'view-dashboard', 'view-projects', 'view-tasks', 'view-objectives', 'view-campaigns',
-    'view-briefs', 'view-contentInputs', 'view-calendar', 'view-inventory', 'view-access',
+    'view-activationFramework', 'view-briefs', 'view-contentInputs', 'view-calendar', 'view-inventory', 'view-access',
     'view-audit', 'view-quickwins', 'view-reports', 'view-notes', 'view-timeline',
     'view-settings', 'view-docs',
   ];
@@ -69,6 +83,14 @@
       banner.className = 'hub-readonly-banner';
       banner.textContent = 'Solo lectura. Los cambios en esta sección los hace el admin (Claudio).';
       view.insertBefore(banner, view.firstChild);
+    });
+    AF_READONLY_PANEL_IDS.forEach(function (id) {
+      var panel = document.getElementById(id);
+      if (!panel || panel.querySelector('.hub-readonly-banner')) return;
+      var banner = document.createElement('div');
+      banner.className = 'hub-readonly-banner';
+      banner.textContent = 'Solo lectura. Estos catálogos (Digital, Trade, Brand, Media Kit) los actualiza el admin (Claudio); el Registro de Campañas sí lo puede editar todo el equipo.';
+      panel.insertBefore(banner, panel.firstChild);
     });
   }
 

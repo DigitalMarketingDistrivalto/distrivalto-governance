@@ -68,6 +68,10 @@
         <svg viewBox="0 0 24 24" class="nav-icon"><path d="M4 19V9M10 19V5M16 19v-7M20 19v-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
         <span>Campaign KPIs</span>
       </button>
+      <button class="nav-item" data-view="activationFramework">
+        <svg viewBox="0 0 24 24" class="nav-icon"><rect x="4" y="4" width="7" height="7" rx="1.3" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="13" y="4" width="7" height="7" rx="1.3" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="4" y="13" width="7" height="7" rx="1.3" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M14.5 20.5l2 2 3.5-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+        <span>Activation Framework</span>
+      </button>
       <button class="nav-item" data-view="briefs">
         <svg viewBox="0 0 24 24" class="nav-icon"><rect x="5" y="3" width="14" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M9 8h6M9 12h6M9 16h3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M8.5 3.5l0.8 1.8h5.4l0.8-1.8" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg>
         <span>Briefs</span>
@@ -344,6 +348,126 @@
       </section>
 
       <!-- ============ BRIEFS ============ -->
+      <!-- ============ ACTIVATION FRAMEWORK ============ -->
+      <section class="view" id="view-activationFramework">
+        <p class="view-intro">Catálogo estandarizado de todo lo que Digital Marketing puede activar para una campaña, los 4 Activation Packs de referencia, y la plantilla de Retailer Media Kit — para presentar propuestas consistentes a cualquier retailer, en cualquier país.</p>
+
+        <div class="af-tabs" id="afTabs">
+          <button class="af-tab active" data-af-tab="catalog">Digital</button>
+          <button class="af-tab" data-af-tab="trade">Trade</button>
+          <button class="af-tab" data-af-tab="brand">Brand</button>
+          <button class="af-tab" data-af-tab="packs">Activation Packs</button>
+          <button class="af-tab" data-af-tab="mediakit">Retailer Media Kit</button>
+          <button class="af-tab" data-af-tab="campaigns">Registro de Campañas</button>
+        </div>
+
+        <div class="af-tab-panel active" id="afPanel-catalog">
+          <p class="view-intro" style="margin-bottom:14px;">Todo lo que Digital Marketing puede activar hoy. La columna Formato dice si esa acción corre orgánica, con pauta, o ambas — en vez de repetir una fila por cada combinación.</p>
+          <div class="toolbar">
+            <div class="search-field">
+              <svg viewBox="0 0 24 24" class="search-icon"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M20 20l-4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              <input type="text" id="afCatalogSearch" placeholder="Buscar acción o categoría…">
+            </div>
+            <div class="toolbar-spacer"></div>
+            <button class="btn btn-ghost" id="afCatalogAddColumnBtn">+ Add Column</button>
+            <button class="btn btn-primary" id="afCatalogAddRowBtn">+ Add Acción</button>
+          </div>
+          <div class="table-card">
+            <table class="data-table" id="afCatalogTable">
+              <thead id="afCatalogHead"></thead>
+              <tbody id="afCatalogBody"></tbody>
+            </table>
+            <div class="table-empty" id="afCatalogEmpty" hidden>No hay acciones que coincidan con la búsqueda.</div>
+          </div>
+        </div>
+
+        <div class="af-tab-panel" id="afPanel-trade">
+          <p class="view-intro" style="margin-bottom:14px;">Acciones de Trade Marketing para eventos no estacionales (aniversarios de retailer, lanzamientos, campañas puntuales) — integradas de la lista de Rodrigo Alvarado.</p>
+          <div class="toolbar">
+            <div class="search-field">
+              <svg viewBox="0 0 24 24" class="search-icon"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M20 20l-4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              <input type="text" id="afTradeSearch" placeholder="Buscar acción o categoría…">
+            </div>
+            <div class="toolbar-spacer"></div>
+            <button class="btn btn-ghost" id="afTradeAddColumnBtn">+ Add Column</button>
+            <button class="btn btn-primary" id="afTradeAddRowBtn">+ Add Acción</button>
+          </div>
+          <div class="table-card">
+            <table class="data-table" id="afTradeTable">
+              <thead id="afTradeHead"></thead>
+              <tbody id="afTradeBody"></tbody>
+            </table>
+            <div class="table-empty" id="afTradeEmpty" hidden>No hay acciones que coincidan con la búsqueda.</div>
+          </div>
+        </div>
+
+        <div class="af-tab-panel" id="afPanel-brand">
+          <p class="view-intro" style="margin-bottom:14px;">Los entregables creativos que Brand tiene que producir para que cada acción de Digital o Trade se pueda ejecutar.</p>
+          <div class="toolbar">
+            <div class="search-field">
+              <svg viewBox="0 0 24 24" class="search-icon"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M20 20l-4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              <input type="text" id="afBrandSearch" placeholder="Buscar entregable o categoría…">
+            </div>
+            <div class="toolbar-spacer"></div>
+            <button class="btn btn-ghost" id="afBrandAddColumnBtn">+ Add Column</button>
+            <button class="btn btn-primary" id="afBrandAddRowBtn">+ Add Entregable</button>
+          </div>
+          <div class="table-card">
+            <table class="data-table" id="afBrandTable">
+              <thead id="afBrandHead"></thead>
+              <tbody id="afBrandBody"></tbody>
+            </table>
+            <div class="table-empty" id="afBrandEmpty" hidden>No hay entregables que coincidan con la búsqueda.</div>
+          </div>
+        </div>
+
+        <div class="af-tab-panel" id="afPanel-packs">
+          <p class="view-intro" style="margin-bottom:16px;">Cuatro combinaciones recomendadas como punto de partida, no como paquete cerrado — cada una cruza Brand, Digital, Trade y una sugerencia de Media Kit, con una nota corta por item para que quede claro qué incluye. Se eligen y se ajustan desde "Crear Nueva Campaña", en Registro de Campañas.</p>
+          <div class="af-pack-grid" id="afPackGrid"></div>
+        </div>
+
+        <div class="af-tab-panel" id="afPanel-mediakit">
+          <div class="toolbar">
+            <div class="search-field">
+              <svg viewBox="0 0 24 24" class="search-icon"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M20 20l-4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              <input type="text" id="afMediaKitSearch" placeholder="Buscar país o retailer…">
+            </div>
+            <div class="toolbar-spacer"></div>
+            <button class="btn btn-ghost" id="afMediaKitAddColumnBtn">+ Add Column</button>
+            <button class="btn btn-primary" id="afMediaKitAddRowBtn">+ Add Retailer</button>
+          </div>
+          <div class="table-card">
+            <table class="data-table" id="afMediaKitTable">
+              <thead id="afMediaKitHead"></thead>
+              <tbody id="afMediaKitBody"></tbody>
+            </table>
+            <div class="table-empty" id="afMediaKitEmpty" hidden>No hay retailers que coincidan con la búsqueda.</div>
+          </div>
+          <div class="af-callout"><b>Cómo se lee Negociabilidad:</b> Se puede solicitar = inventario que el retailer suele dar como colaboración, sin costo directo. Negociable = depende del volumen de la campaña o de la relación comercial, hay que conversarlo caso por caso. Pago = inventario que el retailer solo vende, no lo da como aporte.</div>
+        </div>
+
+        <div class="af-tab-panel" id="afPanel-campaigns">
+          <p class="view-intro" style="margin-bottom:16px;">Banco de todas las campañas armadas con el Activation Framework: qué Pack o mix se usó por país y retailer, qué se pidió del Media Kit, y en qué quedó. Editable por todo el equipo.</p>
+          <div class="toolbar">
+            <div class="search-field">
+              <svg viewBox="0 0 24 24" class="search-icon"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M20 20l-4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              <input type="text" id="afCampaignSearch" placeholder="Buscar campaña, retailer o país…">
+            </div>
+            <div class="toolbar-spacer"></div>
+            <button class="btn btn-primary" id="afNewCampaignBtn">+ Crear Nueva Campaña</button>
+          </div>
+          <div class="table-card">
+            <table class="data-table" id="afCampaignTable">
+              <thead>
+                <tr><th>Campaña</th><th>País</th><th>Retailer</th><th>Pack / Mix</th><th>Estado</th><th>Fecha</th><th></th></tr>
+              </thead>
+              <tbody id="afCampaignBody"></tbody>
+            </table>
+            <div class="table-empty" id="afCampaignEmpty" hidden>Todavía no hay campañas registradas. Usa "+ Crear Nueva Campaña" para armar la primera.</div>
+          </div>
+        </div>
+      </section>
+
       <section class="view" id="view-briefs">
         <p class="view-intro">Brief estándar de Digital Marketing — un solo formato para levantar cualquier solicitud de campaña o pieza digital. Cada envío queda registrado abajo.</p>
 
@@ -831,6 +955,22 @@
     </div>
   </div>
 </div>
+
+<!-- ============ ACTIVATION FRAMEWORK — CAMPAIGN BUILDER ============ -->
+<div class="modal-overlay af-builder-overlay" id="afBuilderOverlay">
+  <div class="modal af-builder-modal" id="afBuilderBox" role="dialog" aria-modal="true">
+    <div class="modal-head">
+      <h3 id="afBuilderTitle">Nueva Campaña</h3>
+      <button class="icon-btn" id="afBuilderCloseBtn" aria-label="Cerrar">
+        <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div class="modal-body af-builder-body" id="afBuilderBody"></div>
+  </div>
+</div>
+
+<!-- Área imprimible para exportar una campaña a PDF (window.print) -->
+<div class="af-campaign-print-area" id="afCampaignPrintArea"></div>
 
 <script src="auth-gate.js"></script>
 </body>

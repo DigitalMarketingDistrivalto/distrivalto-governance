@@ -158,6 +158,203 @@
     { id: uid('a'), name: 'Bitwarden Vault', brand: 'Distrivalto', platform: 'Bitwarden', status: 'Needs Review', priority: 'High' },
   ];
 
+  /* ------------------------------------------------------------------------
+     ACTIVATION FRAMEWORK — seed data
+     Tres catálogos por área (Digital, Trade, Brand), 4 Activation Packs que
+     cruzan las tres áreas con notas explicativas, el Retailer Media Kit, y
+     el Registro de Campañas (banco de campañas armadas con el builder).
+     ------------------------------------------------------------------------ */
+
+  // ---- Digital Activation Catalog ----
+  // "Formato" es por fila (rowSelect), no una sola lista global de opciones:
+  // cada acción tiene su propio menú de formatos válidos (Orgánico / Dark
+  // Post / Pautado / Whitelisting, según aplique), en vez de tener filas
+  // separadas para la misma acción orgánica vs. pautada.
+  const DEFAULT_AF_CATALOG_COLUMNS = [
+    { key: 'category', label: 'Categoría', type: 'text', core: true },
+    { key: 'activation', label: 'Acción', type: 'text', core: true },
+    { key: 'format', label: 'Formato', type: 'rowSelect', optionsKey: 'formatOptions', defaultOptions: ['Orgánico', 'Dark Post', 'Orgánico + Pauta'], core: true },
+    { key: 'measurement', label: 'Cómo se mide', type: 'text', core: true },
+  ];
+
+  const DEFAULT_AF_CATALOG = [
+    { category: 'Content & Social', activation: 'Post / Contenido Estático', formatOptions: ['Orgánico', 'Dark Post', 'Orgánico + Pauta'], format: 'Orgánico', measurement: 'Reach, engagement' },
+    { category: 'Content & Social', activation: 'Short-form Video / Reel', formatOptions: ['Orgánico', 'Dark Post', 'Orgánico + Pauta'], format: 'Orgánico', measurement: 'Views, engagement' },
+    { category: 'Content & Social', activation: 'Stories', formatOptions: ['Orgánico', 'Dark Post'], format: 'Orgánico', measurement: 'Views, taps' },
+    { category: 'Content & Social', activation: 'UGC / Creator Content', formatOptions: ['Orgánico', 'Whitelisting'], format: 'Orgánico', measurement: 'Engagement, saves' },
+    { category: 'Content & Social', activation: 'Recipe / Use-Case Content', formatOptions: ['Orgánico', 'Dark Post'], format: 'Orgánico', measurement: 'Engagement, saves' },
+    { category: 'Content & Social', activation: 'Product Education Content', formatOptions: ['Orgánico', 'Dark Post'], format: 'Orgánico', measurement: 'Engagement, retention' },
+    { category: 'TikTok', activation: 'Video desde la página de la marca', formatOptions: ['Orgánico', 'Pautado'], format: 'Orgánico', measurement: 'Views, CTR' },
+    { category: 'TikTok', activation: 'Video influencer (perfil del creador)', formatOptions: ['Orgánico', 'Whitelisting'], format: 'Orgánico', measurement: 'Engagement, CTR' },
+    { category: 'Paid Media', activation: 'Meta Ads (gestión de pauta)', formatOptions: ['Pautado'], format: 'Pautado', measurement: 'CPM, CTR, ROAS' },
+    { category: 'Paid Media', activation: 'Google Display / YouTube', formatOptions: ['Pautado'], format: 'Pautado', measurement: 'Impressions, CTR' },
+    { category: 'Email / CRM', activation: 'Newsletter Feature (HubSpot, lista propia)', formatOptions: ['Orgánico'], format: 'Orgánico', measurement: 'Open rate, CTR, revenue' },
+    { category: 'Gestión de Campaña', activation: 'Campaign Reporting & Optimization', formatOptions: ['N/A'], format: 'N/A', measurement: 'KPIs vs objetivo' },
+  ].map((r) => ({ id: uid('afc'), ...r }));
+
+  // ---- Trade Marketing Catalog ----
+  // Las 8 acciones que mandó Rodrigo Alvarado (Trade Marketing Specialist),
+  // 19 ago 2026, para eventos no estacionales (aniversarios de retailer,
+  // lanzamientos, campañas puntuales).
+  const DEFAULT_AF_TRADE_COLUMNS = [
+    { key: 'category', label: 'Categoría', type: 'text', core: true },
+    { key: 'activation', label: 'Acción', type: 'text', core: true },
+    { key: 'description', label: 'Descripción', type: 'text', core: true },
+    { key: 'requiresBrand', label: 'Requiere Brand', type: 'select', options: ['Sí', 'No'], core: true },
+    { key: 'measurement', label: 'Cómo se mide', type: 'text', core: true },
+  ];
+
+  const DEFAULT_AF_TRADE = [
+    { category: 'Punto de Venta', activation: 'Activación básica en punto de venta', description: 'Impulsadora acompañada de banner, kiosco o módulo con exhibición de productos; explica características y beneficios al cliente.', requiresBrand: 'Sí', measurement: 'Interacciones, tráfico al exhibidor' },
+    { category: 'Incentivos', activation: 'Regalo por compra', description: 'Por la compra de cualquier producto Holstein o de ciertos SKUs seleccionados, el cliente recibe merchandising (mandil, taza, etc.).', requiresBrand: 'Sí', measurement: 'Unidades canjeadas' },
+    { category: 'Punto de Venta', activation: 'Demo show con degustación', description: 'Kiosco o módulo con impulsadora haciendo demostraciones de uso (air fryer, licuadora, máquina de cupcakes, waffles, etc.) e invitando a degustar.', requiresBrand: 'Sí', measurement: 'Muestras entregadas, conversión in-store' },
+    { category: 'Material Visual', activation: 'Material POP', description: 'Glorificadores, stoppers, danglers, cenefas, habladores, adhesivos de piso y otros elementos, ideal para lanzamientos o campañas específicas.', requiresBrand: 'Sí', measurement: 'Piezas instaladas, visibilidad en tienda' },
+    { category: 'Incentivos', activation: 'Ruleta regalona', description: 'Por la compra de un producto Holstein, el cliente participa en una ruleta donde todos ganan (de merchandising a pequeños electrodomésticos).', requiresBrand: 'Sí', measurement: 'Participaciones, canje de premios' },
+    { category: 'Incentivos', activation: 'Memory Game', description: 'Dinámica de tablero de memoria; según cuántos intentos necesite el participante, gana premio principal, intermedio o de consuelo.', requiresBrand: 'Sí', measurement: 'Participaciones' },
+    { category: 'Producto', activation: 'Combos o kits especiales', description: 'Paquetes de productos complementarios para la campaña (ej. air fryer con accesorios, cafetera con tazas de merchandising) con beneficio por compra conjunta.', requiresBrand: 'Sí', measurement: 'Unidades vendidas del combo' },
+    { category: 'Equipo de Tienda', activation: 'Rally para vendedores del retailer', description: 'Metas de venta durante la campaña, premiando a los vendedores con mayor desempeño para que recomienden activamente los productos.', requiresBrand: 'No', measurement: 'Ventas del equipo, cumplimiento de meta' },
+  ].map((r) => ({ id: uid('aft'), ...r }));
+
+  // ---- Brand Catalog ----
+  // Lo que Brand tiene que producir (los artes) para que cada acción de
+  // Digital o Trade se pueda ejecutar. Si Digital dice "post con 3 artes
+  // estáticos", Brand ya sabe exactamente qué le toca hacer.
+  const DEFAULT_AF_BRAND_COLUMNS = [
+    { key: 'category', label: 'Categoría', type: 'text', core: true },
+    { key: 'deliverable', label: 'Entregable', type: 'text', core: true },
+    { key: 'spec', label: 'Especificación', type: 'text', core: true },
+    { key: 'usedFor', label: 'Se usa en', type: 'text', core: true },
+  ];
+
+  const DEFAULT_AF_BRAND = [
+    { category: 'Redes Sociales', deliverable: 'Set de artes estáticos', spec: '1 a 3 artes, formato cuadrado o vertical según plataforma', usedFor: 'Post / Contenido Estático (Digital)' },
+    { category: 'Redes Sociales', deliverable: 'Carrusel', spec: 'Secuencia de 3 a 5 slides con narrativa', usedFor: 'Post / Contenido Estático (Digital)' },
+    { category: 'Redes Sociales', deliverable: 'Video corto / Reel edit', spec: 'Edición de 15 a 30 segundos, con o sin voz en off', usedFor: 'Short-form Video / Reel (Digital)' },
+    { category: 'Redes Sociales', deliverable: 'Cover / miniatura para video', spec: 'Portada o miniatura para TikTok/Reel', usedFor: 'TikTok, Short-form Video (Digital)' },
+    { category: 'Retail Media', deliverable: 'Banner (Homepage / Category)', spec: 'Medidas según especificación de cada retailer', usedFor: 'Media Kit' },
+    { category: 'Retail Media', deliverable: 'Arte para Newsletter', spec: 'Adaptado al template del retailer o al de HubSpot', usedFor: 'Newsletter Feature (Digital), Media Kit' },
+    { category: 'Trade / Punto de Venta', deliverable: 'Diseño de material POP', spec: 'Glorificadores, stoppers, danglers, cenefas, habladores, adhesivos de piso', usedFor: 'Material POP (Trade)' },
+    { category: 'Trade / Punto de Venta', deliverable: 'Mockup de kiosco / módulo', spec: 'Diseño de la ambientación del punto de venta', usedFor: 'Activación básica, Demo show (Trade)' },
+    { category: 'Trade / Punto de Venta', deliverable: 'Diseño de merchandising', spec: 'Mandil, taza u otro artículo de regalo', usedFor: 'Regalo por compra (Trade)' },
+    { category: 'Trade / Punto de Venta', deliverable: 'Arte de dinámica (ruleta / memory game)', spec: 'Diseño del tablero, ruleta y piezas de premio', usedFor: 'Ruleta regalona, Memory Game (Trade)' },
+    { category: 'Estrategia', deliverable: 'Desarrollo de Concepto Creativo', spec: 'Concepto y narrativa de campaña, aprobado antes de producción', usedFor: 'Toda la campaña' },
+    { category: 'Estrategia', deliverable: 'Content Calendar & Producción de Assets', spec: 'Calendario de contenidos y coordinación de producción de todos los artes', usedFor: 'Toda la campaña' },
+  ].map((r) => ({ id: uid('afb'), ...r }));
+
+  // ---- Activation Packs ----
+  // Cada pack cruza Brand + Digital + Trade + una sugerencia de Media Kit,
+  // con una nota corta por item para que no haya que preguntar qué incluye.
+  // El campaign builder usa "activation" para pre-marcar los checkboxes de
+  // cada catálogo cuando se elige el pack, y "format" para pre-llenar el
+  // Formato de las filas de Digital que lo tengan.
+  const AF_PACKS = [
+    {
+      name: 'LAUNCH PACK',
+      useCase: 'Lanzamiento de producto o SKU nuevo',
+      brand: [
+        { activation: 'Desarrollo de Concepto Creativo', note: 'define la idea y el mensaje central del lanzamiento' },
+        { activation: 'Set de artes estáticos', note: 'piezas para el post de presentación' },
+        { activation: 'Video corto / Reel edit', note: 'video del producto en uso' },
+      ],
+      digital: [
+        { activation: 'Short-form Video / Reel', format: 'Orgánico + Pauta', note: 'presenta el producto al mercado' },
+        { activation: 'UGC / Creator Content', format: 'Whitelisting', note: 'voces externas que le dan credibilidad' },
+        { activation: 'Meta Ads (gestión de pauta)', format: 'Pautado', note: 'enfoque Awareness' },
+        { activation: 'Product Education Content', format: 'Orgánico', note: 'explica cómo se usa' },
+      ],
+      trade: [
+        { activation: 'Demo show con degustación', note: 'deja probar el producto directo en tienda' },
+      ],
+      mediaKitSuggestion: 'Product Listing Enhancement — mejora cómo se ve el producto nuevo en la ficha del retailer',
+    },
+    {
+      name: 'SEASONAL PACK',
+      useCase: 'Fechas comerciales y temporadas (Heritage Month, Halloween, Black Friday, Christmas)',
+      brand: [
+        { activation: 'Desarrollo de Concepto Creativo', note: 'adaptado a la fecha o temporada' },
+        { activation: 'Set de artes estáticos', note: 'con la temática de la fecha' },
+        { activation: 'Carrusel', note: 'narrativa de temporada en varios slides' },
+      ],
+      digital: [
+        { activation: 'Short-form Video / Reel', format: 'Dark Post', note: 'video temático amplificado con pauta' },
+        { activation: 'Post / Contenido Estático', format: 'Orgánico + Pauta', note: 'presencia constante durante la fecha' },
+        { activation: 'Meta Ads (gestión de pauta)', format: 'Pautado', note: 'Awareness + Conversion durante la ventana de la campaña' },
+      ],
+      trade: [
+        { activation: 'Material POP', note: 'ambienta el punto de venta para la fecha' },
+        { activation: 'Ruleta regalona', note: 'dinámica que atrae tráfico al punto de venta' },
+      ],
+      mediaKitSuggestion: 'Homepage Banner o Category Banner — visibilidad del retailer durante la fecha',
+    },
+    {
+      name: 'CONVERSION PACK',
+      useCase: 'Empujar venta directa en un retailer específico',
+      brand: [
+        { activation: 'Set de artes estáticos', note: 'piezas de venta directa (precio, oferta, CTA)' },
+      ],
+      digital: [
+        { activation: 'Post / Contenido Estático', format: 'Dark Post', note: 'pauta directa a conversión' },
+        { activation: 'Meta Ads (gestión de pauta)', format: 'Pautado', note: 'enfoque Traffic/Conversion' },
+      ],
+      trade: [
+        { activation: 'Combos o kits especiales', note: 'empuja el ticket promedio' },
+        { activation: 'Rally para vendedores del retailer', note: 'el equipo de tienda recomienda activamente el producto' },
+      ],
+      mediaKitSuggestion: 'Sponsored Search / Product Placement + Category Banner — visibilidad en el momento de compra',
+    },
+    {
+      name: 'FULL CAMPAIGN PACK (360)',
+      useCase: 'Campañas grandes, multi-canal, multi-retailer',
+      brand: [
+        { activation: 'Desarrollo de Concepto Creativo', note: 'concepto único para todos los canales' },
+        { activation: 'Set de artes estáticos', note: '' },
+        { activation: 'Carrusel', note: '' },
+        { activation: 'Video corto / Reel edit', note: '' },
+      ],
+      digital: [
+        { activation: 'Meta Ads (gestión de pauta)', format: 'Pautado', note: 'Awareness + Conversion' },
+        { activation: 'Short-form Video / Reel', format: 'Orgánico + Pauta', note: '' },
+        { activation: 'UGC / Creator Content', format: 'Whitelisting', note: '' },
+        { activation: 'Video desde la página de la marca', format: 'Pautado', note: 'TikTok de marca' },
+        { activation: 'Newsletter Feature (HubSpot, lista propia)', format: 'Orgánico', note: '' },
+      ],
+      trade: [
+        { activation: 'Activación básica en punto de venta', note: '' },
+        { activation: 'Material POP', note: '' },
+        { activation: 'Rally para vendedores del retailer', note: '' },
+      ],
+      mediaKitSuggestion: 'Homepage Banner + Category Banner + Sponsored Search + Newsletter Placement del retailer',
+    },
+  ];
+
+  // ---- Retailer Media Kit ----
+  const DEFAULT_AF_MEDIAKIT_COLUMNS = [
+    { key: 'country', label: 'País', type: 'text', core: true },
+    { key: 'retailer', label: 'Retailer', type: 'text', core: true },
+    { key: 'inventory', label: 'Tipo de inventario', type: 'text', core: true },
+    { key: 'negotiability', label: 'Negociabilidad', type: 'select', options: ['Pendiente', 'Se puede solicitar', 'Negociable', 'Pago'], core: true },
+    { key: 'lastUpdated', label: 'Última actualización', type: 'text', core: true },
+  ];
+
+  const DEFAULT_AF_MEDIAKIT = [
+    { country: 'Ecuador', retailer: 'Tipti', inventory: 'Pendiente de confirmar con el retailer', negotiability: 'Pendiente', lastUpdated: 'Pendiente' },
+    { country: 'Ecuador', retailer: 'MG3 / La Favorita', inventory: 'Pendiente de confirmar con el retailer', negotiability: 'Pendiente', lastUpdated: 'Pendiente' },
+    { country: 'Rep. Dominicana', retailer: 'Grupo CCN / Jumbo / Casa Cuesta', inventory: 'Pendiente de confirmar con el retailer', negotiability: 'Pendiente', lastUpdated: 'Pendiente' },
+    { country: 'Colombia', retailer: 'Falabella', inventory: 'Pendiente de confirmar con el retailer', negotiability: 'Pendiente', lastUpdated: 'Pendiente' },
+    { country: 'Perú', retailer: 'Promart', inventory: 'Pendiente de confirmar con el retailer', negotiability: 'Pendiente', lastUpdated: 'Pendiente' },
+    { country: 'USA', retailer: 'Walmart', inventory: 'Confirmado: Sales Rewards & Attribution (referral links)', negotiability: 'Se puede solicitar', lastUpdated: 'Ago 2026' },
+    { country: 'USA', retailer: 'Amazon', inventory: 'Confirmado: Amazon Attribution', negotiability: 'Se puede solicitar', lastUpdated: 'Ago 2026' },
+  ].map((r) => ({ id: uid('afm'), ...r }));
+
+  // ---- Registro de Campañas ----
+  // El banco de todas las campañas armadas con el builder: nombre, país,
+  // retailer, pack o mix personalizado, qué se eligió de Digital/Trade/
+  // Brand, qué se pidió del Media Kit y en qué quedó, observaciones finales
+  // y el estado (Pending/Approved/Proposal). Arranca vacío, nada inventado.
+  const AF_CAMPAIGN_STATUS_COLOR = { Pending: 'var(--amber)', Approved: 'var(--green)', Proposal: 'var(--blue)' };
+  const AF_MEDIAKIT_SOURCE_OPTIONS = ['Negociar con retailer', 'Entra desde retailer', 'Pagamos nosotros'];
+  const DEFAULT_AF_CAMPAIGNS = [];
+
   const DEFAULT_QUICK_WINS = [
     // ---- Done, ya entregado ----
     { id: uid('qw'), title: 'Back to School USA, estrategia final + calendario real + guía Meta/TikTok Ads paso a paso', platform: 'Back to School', priority: 'High', status: 'done', dueDate: '' },
@@ -939,6 +1136,15 @@
     briefs: 'dmg_briefs_v1',
     contentInputs: 'dmg_content_inputs_v1',
     calendarPosts: 'dmg_calendar_posts_v1',
+    afCatalogColumns: 'dmg_af_catalog_columns_v1',
+    afCatalog: 'dmg_af_catalog_v1',
+    afMediaKitColumns: 'dmg_af_mediakit_columns_v1',
+    afMediaKit: 'dmg_af_mediakit_v1',
+    afTradeColumns: 'dmg_af_trade_columns_v1',
+    afTrade: 'dmg_af_trade_v1',
+    afBrandColumns: 'dmg_af_brand_columns_v1',
+    afBrand: 'dmg_af_brand_v1',
+    afCampaigns: 'dmg_af_campaigns_v1',
   };
 
   function loadStore(key, fallback) {
@@ -987,6 +1193,15 @@
   let briefs = loadStore(STORE_KEYS.briefs, []);
   let contentInputs = loadStore(STORE_KEYS.contentInputs, []);
   let calendarPosts = loadStore(STORE_KEYS.calendarPosts, DEFAULT_CALENDAR_POSTS);
+  let afCatalogColumns = loadStore(STORE_KEYS.afCatalogColumns, DEFAULT_AF_CATALOG_COLUMNS);
+  let afCatalog = loadStore(STORE_KEYS.afCatalog, DEFAULT_AF_CATALOG);
+  let afMediaKitColumns = loadStore(STORE_KEYS.afMediaKitColumns, DEFAULT_AF_MEDIAKIT_COLUMNS);
+  let afMediaKit = loadStore(STORE_KEYS.afMediaKit, DEFAULT_AF_MEDIAKIT);
+  let afTradeColumns = loadStore(STORE_KEYS.afTradeColumns, DEFAULT_AF_TRADE_COLUMNS);
+  let afTrade = loadStore(STORE_KEYS.afTrade, DEFAULT_AF_TRADE);
+  let afBrandColumns = loadStore(STORE_KEYS.afBrandColumns, DEFAULT_AF_BRAND_COLUMNS);
+  let afBrand = loadStore(STORE_KEYS.afBrand, DEFAULT_AF_BRAND);
+  let afCampaigns = loadStore(STORE_KEYS.afCampaigns, DEFAULT_AF_CAMPAIGNS);
 
   function persistPlatforms() { saveStore(STORE_KEYS.platforms, platforms); }
   function persistAccess() { saveStore(STORE_KEYS.access, accessState); }
@@ -1007,6 +1222,15 @@
   function persistBriefs() { saveStore(STORE_KEYS.briefs, briefs); }
   function persistContentInputs() { saveStore(STORE_KEYS.contentInputs, contentInputs); }
   function persistCalendarPosts() { saveStore(STORE_KEYS.calendarPosts, calendarPosts); }
+  function persistAFCatalogColumns() { saveStore(STORE_KEYS.afCatalogColumns, afCatalogColumns); }
+  function persistAFCatalog() { saveStore(STORE_KEYS.afCatalog, afCatalog); }
+  function persistAFMediaKitColumns() { saveStore(STORE_KEYS.afMediaKitColumns, afMediaKitColumns); }
+  function persistAFMediaKit() { saveStore(STORE_KEYS.afMediaKit, afMediaKit); }
+  function persistAFTradeColumns() { saveStore(STORE_KEYS.afTradeColumns, afTradeColumns); }
+  function persistAFTrade() { saveStore(STORE_KEYS.afTrade, afTrade); }
+  function persistAFBrandColumns() { saveStore(STORE_KEYS.afBrandColumns, afBrandColumns); }
+  function persistAFBrand() { saveStore(STORE_KEYS.afBrand, afBrand); }
+  function persistAFCampaigns() { saveStore(STORE_KEYS.afCampaigns, afCampaigns); }
 
   function defaultAccessRow() {
     const row = {};
@@ -1092,6 +1316,7 @@
     tasks: { title: 'Tasks', sub: 'The 27 deliverables of the 30-60-90 day plan' },
     objectives: { title: 'Objectives & KPIs', sub: 'Business KPIs and the 3 OKRs for H2 2026' },
     campaigns: { title: 'Campaign KPIs', sub: 'Performance by platform and campaign, month over month' },
+    activationFramework: { title: 'Activation Framework', sub: 'Digital Activation Catalog, Activation Packs y Retailer Media Kit — para propuestas estandarizadas a retailers' },
     briefs: { title: 'Briefs', sub: 'Brief estándar de Digital Marketing y registro de todas las solicitudes' },
     contentInputs: { title: 'LinkedIn B2B', sub: 'Banco de contenido, tema, copy, estado y quién publica/repostea cada post' },
     calendar: { title: 'Content Calendar', sub: 'Calendario de posteos por plataforma, marca y país — Facebook, Instagram, TikTok, LinkedIn y Pinterest' },
@@ -1377,6 +1602,652 @@
     assets.forEach((a) => { a[key] = col.type === 'select' ? col.options[0] : ''; });
     persistAssetColumns(); persistAssets();
     renderInventoryHead(); renderInventoryTable();
+  });
+
+  /* ------------------------------------------------------------------------
+     ACTIVATION FRAMEWORK
+     Catálogo, Packs y Retailer Media Kit del Marketing Activation Framework,
+     clonando el patrón editable/buscable/extensible de la tabla de Inventory
+     de arriba, generalizado en un solo controller reutilizable para las dos
+     tablas (Catalog y Media Kit) en vez de duplicar cuatro funciones dos veces.
+     ------------------------------------------------------------------------ */
+
+  function buildAFTableController(opts) {
+    let search = '';
+
+    function cellHtml(col, row) {
+      const value = row[col.key] || '';
+      if (col.type === 'select') {
+        const color = col.colorMap ? col.colorMap[value] : null;
+        const optsHtml = col.options.map((o) => `<option value="${escapeHtml(o)}" ${o === value ? 'selected' : ''}>${escapeHtml(o)}</option>`).join('');
+        return `<td><select class="cell-select" data-id="${row.id}" data-key="${col.key}" ${color ? `style="color:${color}"` : ''}>${optsHtml}</select></td>`;
+      }
+      if (col.type === 'rowSelect') {
+        // Las opciones válidas vienen del propio row (col.optionsKey), no de
+        // una lista global de la columna, porque cada fila del catálogo
+        // tiene su propio menú de formatos válidos.
+        const rowOptions = row[col.optionsKey] || col.defaultOptions || ['—'];
+        const optsHtml = rowOptions.map((o) => `<option value="${escapeHtml(o)}" ${o === value ? 'selected' : ''}>${escapeHtml(o)}</option>`).join('');
+        return `<td><select class="cell-select" data-id="${row.id}" data-key="${col.key}">${optsHtml}</select></td>`;
+      }
+      return `<td contenteditable="true" data-id="${row.id}" data-key="${col.key}">${escapeHtml(value)}</td>`;
+    }
+
+    function renderHead() {
+      const thead = document.getElementById(opts.headId);
+      if (!thead) return;
+      const columns = opts.getColumns();
+      thead.innerHTML = `<tr>${columns.map((c) => `
+        <th>
+          <div class="th-with-action">
+            <span class="th-label">${escapeHtml(c.label)}</span>
+            ${!c.core ? `<button class="icon-btn" data-delete-col="${c.key}" aria-label="Delete column"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>` : ''}
+          </div>
+        </th>`).join('')}<th></th></tr>`;
+
+      thead.querySelectorAll('[data-delete-col]').forEach((btn) => btn.addEventListener('click', () => {
+        const key = btn.dataset.deleteCol;
+        if (!confirm('Delete this column? This removes it from every row.')) return;
+        opts.setColumns(opts.getColumns().filter((c) => c.key !== key));
+        opts.getRows().forEach((r) => { delete r[key]; });
+        opts.persistColumns(); opts.persistRows();
+        renderHead(); renderTable();
+      }));
+    }
+
+    function renderTable() {
+      const columns = opts.getColumns();
+      const q = search.toLowerCase();
+      const allRows = opts.getRows();
+      const rows = !q ? allRows : allRows.filter((r) => opts.searchKeys.some((k) => (r[k] || '').toLowerCase().includes(q)));
+
+      const body = document.getElementById(opts.bodyId);
+      const empty = document.getElementById(opts.emptyId);
+      if (!body) return;
+
+      if (rows.length === 0) { body.innerHTML = ''; if (empty) empty.hidden = false; return; }
+      if (empty) empty.hidden = true;
+
+      body.innerHTML = rows.map((r) => `
+        <tr>
+          ${columns.map((c) => cellHtml(c, r)).join('')}
+          <td class="row-delete-cell"><button class="icon-btn" data-delete-row="${r.id}" aria-label="Delete row"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></td>
+        </tr>
+      `).join('');
+    }
+
+    function bodyDelegation() {
+      const body = document.getElementById(opts.bodyId);
+      if (!body) return;
+
+      body.addEventListener('focusout', (e) => {
+        const td = e.target.closest('td[contenteditable="true"]');
+        if (!td) return;
+        const row = opts.getRows().find((r) => r.id === td.dataset.id);
+        if (!row) return;
+        row[td.dataset.key] = td.textContent.trim();
+        opts.persistRows();
+      });
+
+      body.addEventListener('change', (e) => {
+        const sel = e.target.closest('select.cell-select');
+        if (!sel) return;
+        const row = opts.getRows().find((r) => r.id === sel.dataset.id);
+        if (!row) return;
+        row[sel.dataset.key] = sel.value;
+        const col = opts.getColumns().find((c) => c.key === sel.dataset.key);
+        if (col && col.colorMap) sel.style.color = col.colorMap[sel.value] || '';
+        opts.persistRows();
+      });
+
+      body.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-delete-row]');
+        if (!btn) return;
+        if (!confirm('Delete this row?')) return;
+        opts.setRows(opts.getRows().filter((r) => r.id !== btn.dataset.deleteRow));
+        opts.persistRows();
+        renderTable();
+      });
+    }
+
+    const searchEl = document.getElementById(opts.searchId);
+    if (searchEl) searchEl.addEventListener('input', (e) => { search = e.target.value; renderTable(); });
+
+    const addRowBtn = document.getElementById(opts.addRowBtnId);
+    if (addRowBtn) addRowBtn.addEventListener('click', () => {
+      const columns = opts.getColumns();
+      const row = { id: uid('af') };
+      columns.forEach((c) => {
+        if (c.type === 'select') { row[c.key] = c.options[0]; return; }
+        if (c.type === 'rowSelect') {
+          const fallback = c.defaultOptions || ['—'];
+          row[c.optionsKey] = fallback;
+          row[c.key] = fallback[0];
+          return;
+        }
+        row[c.key] = '';
+      });
+      opts.setRows([row, ...opts.getRows()]);
+      opts.persistRows();
+      renderTable();
+    });
+
+    const addColBtn = document.getElementById(opts.addColBtnId);
+    if (addColBtn) addColBtn.addEventListener('click', () => {
+      const name = prompt('Nombre de la nueva columna:');
+      if (!name || !name.trim()) return;
+      const optionsRaw = prompt('Opciones separadas por coma (dejar vacío para texto libre):', '');
+      const key = 'col_' + slugify(name) + '_' + uid('c');
+      const col = optionsRaw && optionsRaw.trim()
+        ? { key, label: name.trim(), type: 'select', options: optionsRaw.split(',').map((s) => s.trim()).filter(Boolean), core: false }
+        : { key, label: name.trim(), type: 'text', core: false };
+      opts.setColumns([...opts.getColumns(), col]);
+      opts.getRows().forEach((r) => { r[key] = col.type === 'select' ? col.options[0] : ''; });
+      opts.persistColumns(); opts.persistRows();
+      renderHead(); renderTable();
+    });
+
+    return { renderHead, renderTable, bodyDelegation };
+  }
+
+  const afCatalogController = buildAFTableController({
+    getColumns: () => afCatalogColumns,
+    setColumns: (v) => { afCatalogColumns = v; },
+    getRows: () => afCatalog,
+    setRows: (v) => { afCatalog = v; },
+    persistColumns: persistAFCatalogColumns,
+    persistRows: persistAFCatalog,
+    headId: 'afCatalogHead', bodyId: 'afCatalogBody', emptyId: 'afCatalogEmpty', searchId: 'afCatalogSearch',
+    searchKeys: ['category', 'activation'],
+    addRowBtnId: 'afCatalogAddRowBtn', addColBtnId: 'afCatalogAddColumnBtn',
+  });
+
+  const afMediaKitController = buildAFTableController({
+    getColumns: () => afMediaKitColumns,
+    setColumns: (v) => { afMediaKitColumns = v; },
+    getRows: () => afMediaKit,
+    setRows: (v) => { afMediaKit = v; },
+    persistColumns: persistAFMediaKitColumns,
+    persistRows: persistAFMediaKit,
+    headId: 'afMediaKitHead', bodyId: 'afMediaKitBody', emptyId: 'afMediaKitEmpty', searchId: 'afMediaKitSearch',
+    searchKeys: ['country', 'retailer'],
+    addRowBtnId: 'afMediaKitAddRowBtn', addColBtnId: 'afMediaKitAddColumnBtn',
+  });
+
+  const afTradeController = buildAFTableController({
+    getColumns: () => afTradeColumns,
+    setColumns: (v) => { afTradeColumns = v; },
+    getRows: () => afTrade,
+    setRows: (v) => { afTrade = v; },
+    persistColumns: persistAFTradeColumns,
+    persistRows: persistAFTrade,
+    headId: 'afTradeHead', bodyId: 'afTradeBody', emptyId: 'afTradeEmpty', searchId: 'afTradeSearch',
+    searchKeys: ['category', 'activation'],
+    addRowBtnId: 'afTradeAddRowBtn', addColBtnId: 'afTradeAddColumnBtn',
+  });
+
+  const afBrandController = buildAFTableController({
+    getColumns: () => afBrandColumns,
+    setColumns: (v) => { afBrandColumns = v; },
+    getRows: () => afBrand,
+    setRows: (v) => { afBrand = v; },
+    persistColumns: persistAFBrandColumns,
+    persistRows: persistAFBrand,
+    headId: 'afBrandHead', bodyId: 'afBrandBody', emptyId: 'afBrandEmpty', searchId: 'afBrandSearch',
+    searchKeys: ['category', 'deliverable'],
+    addRowBtnId: 'afBrandAddRowBtn', addColBtnId: 'afBrandAddColumnBtn',
+  });
+
+  function renderAFCatalog() { afCatalogController.renderHead(); afCatalogController.renderTable(); }
+  function renderAFMediaKit() { afMediaKitController.renderHead(); afMediaKitController.renderTable(); }
+  function renderAFTrade() { afTradeController.renderHead(); afTradeController.renderTable(); }
+  function renderAFBrand() { afBrandController.renderHead(); afBrandController.renderTable(); }
+
+  function renderAFPacks() {
+    const grid = document.getElementById('afPackGrid');
+    if (!grid) return;
+    const areaBlock = (label, items) => {
+      if (!items || !items.length) return '';
+      return `
+        <div class="af-pack-area">
+          <div class="af-pack-area-label">${escapeHtml(label)}</div>
+          <ul class="af-pack-list">
+            ${items.map((it) => `<li><b>${escapeHtml(it.activation)}</b>${it.format ? ` <span class="af-pack-format">(${escapeHtml(it.format)})</span>` : ''}${it.note ? ` — ${escapeHtml(it.note)}` : ''}</li>`).join('')}
+          </ul>
+        </div>`;
+    };
+    grid.innerHTML = AF_PACKS.map((p) => `
+      <div class="panel-card af-pack-card">
+        <h3>${escapeHtml(p.name)}</h3>
+        <p class="view-intro" style="font-style:italic; margin-bottom:10px;">${escapeHtml(p.useCase)}</p>
+        ${areaBlock('Brand', p.brand)}
+        ${areaBlock('Digital', p.digital)}
+        ${areaBlock('Trade', p.trade)}
+        ${p.mediaKitSuggestion ? `<div class="af-pack-area"><div class="af-pack-area-label">Media Kit sugerido</div><p class="af-pack-mediakit">${escapeHtml(p.mediaKitSuggestion)}</p></div>` : ''}
+      </div>
+    `).join('');
+  }
+
+  /* ------------------------------------------------------------------------
+     REGISTRO DE CAMPAÑAS — banco + builder ("Crear Nueva Campaña")
+     El builder es un formulario de una sola vista (sin pasos ocultos, para
+     no complicar la edición posterior): datos generales, Pack o Campaña
+     Personalizada, checklists de Digital/Trade/Brand (con Formato en las
+     filas de Digital que lo tengan), Media Kit filtrado por el retailer
+     elegido, y observaciones finales. Todo se guarda como un solo registro
+     en el banco de campañas.
+     ------------------------------------------------------------------------ */
+
+  let afBuilderState = null; // { editingId, name, country, retailer, packUsed, digital: {activation: format|true}, trade: Set, brand: Set, mediaKit: {item: source}, observations }
+  let afCampaignSearchState = '';
+
+  function afCountryOptions() {
+    const fromKit = afMediaKit.map((r) => r.country).filter(Boolean);
+    return Array.from(new Set(fromKit)).sort();
+  }
+
+  function afRetailerOptionsForCountry(country) {
+    const rows = afMediaKit.filter((r) => r.country === country);
+    return Array.from(new Set(rows.map((r) => r.retailer).filter(Boolean)));
+  }
+
+  function afMediaKitRowsForRetailer(retailer) {
+    if (!retailer) return [];
+    return afMediaKit.filter((r) => r.retailer === retailer);
+  }
+
+  function findAFPack(name) { return AF_PACKS.find((p) => p.name === name); }
+
+  function freshBuilderState() {
+    return {
+      editingId: null,
+      name: '',
+      country: '',
+      retailer: '',
+      packUsed: '',
+      digital: {},
+      trade: {},
+      brand: {},
+      mediaKit: {},
+      observations: '',
+      status: 'Pending',
+    };
+  }
+
+  function applyPackToState(packName) {
+    afBuilderState.packUsed = packName;
+    afBuilderState.digital = {};
+    afBuilderState.trade = {};
+    afBuilderState.brand = {};
+    const pack = findAFPack(packName);
+    if (pack) {
+      (pack.digital || []).forEach((it) => { afBuilderState.digital[it.activation] = it.format || true; });
+      (pack.trade || []).forEach((it) => { afBuilderState.trade[it.activation] = true; });
+      (pack.brand || []).forEach((it) => { afBuilderState.brand[it.activation] = true; });
+    }
+    renderBuilderBody();
+  }
+
+  function afCheckListHtml(rows, stateObj, opts) {
+    // opts: { nameKey, descKey, groupKey, withFormat }
+    if (!rows.length) return `<p class="af-builder-empty">No hay filas en este catálogo todavía.</p>`;
+    return `<div class="af-check-list">${rows.map((r) => {
+      const name = r[opts.nameKey];
+      const checked = Object.prototype.hasOwnProperty.call(stateObj, name);
+      const desc = opts.descKey && r[opts.descKey] ? `<span class="af-check-item-desc">${escapeHtml(r[opts.descKey])}</span>` : '';
+      let formatSelect = '';
+      if (opts.withFormat) {
+        const options = r.formatOptions || ['—'];
+        const current = (typeof stateObj[name] === 'string') ? stateObj[name] : (r.format || options[0]);
+        formatSelect = `<select class="af-format-select" data-af-format-for="${escapeHtml(name)}" ${checked ? '' : 'disabled'}>${options.map((o) => `<option value="${escapeHtml(o)}" ${o === current ? 'selected' : ''}>${escapeHtml(o)}</option>`).join('')}</select>`;
+      }
+      return `
+        <label class="af-check-item">
+          <input type="checkbox" data-af-check="${escapeHtml(name)}" ${checked ? 'checked' : ''}>
+          <span class="af-check-item-label">${escapeHtml(name)}${desc}</span>
+          ${formatSelect}
+        </label>`;
+    }).join('')}</div>`;
+  }
+
+  function renderBuilderBody() {
+    const body = document.getElementById('afBuilderBody');
+    if (!body || !afBuilderState) return;
+    const s = afBuilderState;
+    const countries = afCountryOptions();
+    const retailers = afRetailerOptionsForCountry(s.country);
+    const mediaKitRows = afMediaKitRowsForRetailer(s.retailer);
+
+    document.getElementById('afBuilderTitle').textContent = s.editingId ? 'Editar Campaña' : 'Nueva Campaña';
+
+    body.innerHTML = `
+      <div class="af-builder-step-label">Datos generales</div>
+      <div class="brief-form-grid" style="grid-template-columns: repeat(3, 1fr);">
+        <div class="field-group">
+          <label class="field-label">Nombre de la campaña</label>
+          <input type="text" class="text-input" id="afFormName" value="${escapeHtml(s.name)}" placeholder="Ej. Heritage Month 2026 — Arepa Maker">
+        </div>
+        <div class="field-group">
+          <label class="field-label">País</label>
+          <select class="text-input" id="afFormCountry">
+            <option value="">Elegir país…</option>
+            ${countries.map((c) => `<option value="${escapeHtml(c)}" ${c === s.country ? 'selected' : ''}>${escapeHtml(c)}</option>`).join('')}
+          </select>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Retailer</label>
+          <select class="text-input" id="afFormRetailer" ${!s.country ? 'disabled' : ''}>
+            <option value="">${s.country ? 'Elegir retailer…' : 'Elegí un país primero'}</option>
+            ${retailers.map((r) => `<option value="${escapeHtml(r)}" ${r === s.retailer ? 'selected' : ''}>${escapeHtml(r)}</option>`).join('')}
+          </select>
+        </div>
+      </div>
+
+      <div class="af-builder-step-label">Pack o Campaña Personalizada</div>
+      <p class="af-builder-hint">Elegí un Pack como punto de partida (se marcan sus acciones sugeridas abajo, y las puedes ajustar libremente) o "Campaña Personalizada" para armar todo desde cero.</p>
+      <div class="af-pack-picker">
+        ${AF_PACKS.map((p) => `
+          <div class="af-pack-choice ${s.packUsed === p.name ? 'selected' : ''}" data-af-pack-choice="${escapeHtml(p.name)}">
+            <div class="af-pack-choice-name">${escapeHtml(p.name)}</div>
+            <div class="af-pack-choice-desc">${escapeHtml(p.useCase)}</div>
+          </div>`).join('')}
+        <div class="af-pack-choice ${s.packUsed === 'Campaña Personalizada' ? 'selected' : ''}" data-af-pack-choice="Campaña Personalizada">
+          <div class="af-pack-choice-name">Campaña Personalizada</div>
+          <div class="af-pack-choice-desc">Armar el mix desde cero, sin punto de partida</div>
+        </div>
+      </div>
+
+      <div class="af-builder-step-label">Acciones Digital</div>
+      <div data-af-group="digital">${afCheckListHtml(afCatalog, s.digital, { nameKey: 'activation', withFormat: true })}</div>
+
+      <div class="af-builder-step-label">Acciones Trade</div>
+      <div data-af-group="trade">${afCheckListHtml(afTrade, s.trade, { nameKey: 'activation', descKey: 'description' })}</div>
+
+      <div class="af-builder-step-label">Acciones Brand</div>
+      <div data-af-group="brand">${afCheckListHtml(afBrand, s.brand, { nameKey: 'deliverable', descKey: 'spec' })}</div>
+
+      <div class="af-builder-step-label">Media Kit (opcional)</div>
+      ${!s.retailer
+        ? `<p class="af-builder-empty">Elegí un retailer arriba para ver su Media Kit.</p>`
+        : (mediaKitRows.length === 0
+          ? `<p class="af-builder-empty">Todavía no hay Media Kit cargado para ${escapeHtml(s.retailer)}.</p>`
+          : `<div class="af-check-list">${mediaKitRows.map((r) => {
+              const checked = Object.prototype.hasOwnProperty.call(s.mediaKit, r.id);
+              const current = s.mediaKit[r.id] || 'Negociar con retailer';
+              return `
+                <label class="af-check-item">
+                  <input type="checkbox" data-af-mediakit-check="${r.id}" ${checked ? 'checked' : ''}>
+                  <span class="af-check-item-label">${escapeHtml(r.inventory)}<span class="af-check-item-desc">${escapeHtml(r.negotiability)} · actualizado ${escapeHtml(r.lastUpdated)}</span></span>
+                  <select class="af-mediakit-source-select" data-af-mediakit-source-for="${r.id}" ${checked ? '' : 'disabled'}>
+                    ${AF_MEDIAKIT_SOURCE_OPTIONS.map((o) => `<option value="${escapeHtml(o)}" ${o === current ? 'selected' : ''}>${escapeHtml(o)}</option>`).join('')}
+                  </select>
+                </label>`;
+            }).join('')}</div>`)
+      }
+
+      <div class="af-builder-step-label">Observaciones finales</div>
+      <textarea class="text-area" id="afFormObservations" rows="3" placeholder="Puntos negociados, condiciones especiales, lo que se acordó con el retailer…">${escapeHtml(s.observations)}</textarea>
+
+      <div class="af-builder-actions">
+        <div>${s.editingId ? '<button class="btn btn-ghost" id="afBuilderDeleteBtn">Eliminar campaña</button>' : ''}</div>
+        <div class="af-builder-actions-right">
+          <button class="btn btn-ghost" id="afBuilderCancelBtn">Cancelar</button>
+          <button class="btn btn-primary" id="afBuilderSaveBtn">Guardar Campaña</button>
+        </div>
+      </div>
+    `;
+
+    // ---- wiring ----
+    document.getElementById('afFormName').addEventListener('input', (e) => { s.name = e.target.value; });
+    document.getElementById('afFormCountry').addEventListener('change', (e) => {
+      s.country = e.target.value;
+      s.retailer = '';
+      s.mediaKit = {};
+      renderBuilderBody();
+    });
+    document.getElementById('afFormRetailer').addEventListener('change', (e) => {
+      s.retailer = e.target.value;
+      s.mediaKit = {};
+      renderBuilderBody();
+    });
+    document.getElementById('afFormObservations').addEventListener('input', (e) => { s.observations = e.target.value; });
+
+    body.querySelectorAll('[data-af-pack-choice]').forEach((el) => {
+      el.addEventListener('click', () => applyPackToState(el.dataset.afPackChoice));
+    });
+
+    body.querySelectorAll('[data-af-check]').forEach((el) => {
+      el.addEventListener('change', (e) => {
+        const name = el.dataset.afCheck;
+        // A qué catálogo pertenece este checkbox lo dice el contenedor
+        // data-af-group más cercano, no la posición en la lista (así no se
+        // rompe si algún catálogo queda vacío).
+        const group = el.closest('[data-af-group]');
+        let target = null;
+        if (group) {
+          if (group.dataset.afGroup === 'digital') target = s.digital;
+          else if (group.dataset.afGroup === 'trade') target = s.trade;
+          else if (group.dataset.afGroup === 'brand') target = s.brand;
+        }
+        if (!target) return;
+        if (e.target.checked) target[name] = true; else delete target[name];
+        renderBuilderBody();
+      });
+    });
+
+    body.querySelectorAll('[data-af-format-for]').forEach((sel) => {
+      sel.addEventListener('change', (e) => { s.digital[sel.dataset.afFormatFor] = e.target.value; });
+    });
+
+    body.querySelectorAll('[data-af-mediakit-check]').forEach((el) => {
+      el.addEventListener('change', (e) => {
+        const id = el.dataset.afMediakitCheck;
+        if (e.target.checked) s.mediaKit[id] = s.mediaKit[id] || 'Negociar con retailer'; else delete s.mediaKit[id];
+        renderBuilderBody();
+      });
+    });
+    body.querySelectorAll('[data-af-mediakit-source-for]').forEach((sel) => {
+      sel.addEventListener('change', (e) => { s.mediaKit[sel.dataset.afMediakitSourceFor] = e.target.value; });
+    });
+
+    document.getElementById('afBuilderCancelBtn').addEventListener('click', closeCampaignBuilder);
+    document.getElementById('afBuilderSaveBtn').addEventListener('click', saveCampaignFromBuilder);
+    const delBtn = document.getElementById('afBuilderDeleteBtn');
+    if (delBtn) delBtn.addEventListener('click', () => {
+      if (!confirm('¿Eliminar esta campaña del registro?')) return;
+      afCampaigns = afCampaigns.filter((c) => c.id !== s.editingId);
+      persistAFCampaigns();
+      closeCampaignBuilder();
+      renderAFCampaignBank();
+    });
+  }
+
+  function openCampaignBuilder(existingCampaign) {
+    if (existingCampaign) {
+      afBuilderState = {
+        editingId: existingCampaign.id,
+        name: existingCampaign.name,
+        country: existingCampaign.country,
+        retailer: existingCampaign.retailer,
+        packUsed: existingCampaign.packUsed,
+        digital: {}, trade: {}, brand: {}, mediaKit: {},
+        observations: existingCampaign.observations || '',
+        status: existingCampaign.status || 'Pending',
+      };
+      (existingCampaign.digitalActions || []).forEach((it) => { afBuilderState.digital[it.activation] = it.format || true; });
+      (existingCampaign.tradeActions || []).forEach((it) => { afBuilderState.trade[it.activation] = true; });
+      (existingCampaign.brandActions || []).forEach((it) => { afBuilderState.brand[it.activation] = true; });
+      (existingCampaign.mediaKitItems || []).forEach((it) => { if (it.id) afBuilderState.mediaKit[it.id] = it.source; });
+    } else {
+      afBuilderState = freshBuilderState();
+    }
+    renderBuilderBody();
+    document.getElementById('afBuilderOverlay').classList.add('active');
+  }
+
+  function closeCampaignBuilder() {
+    document.getElementById('afBuilderOverlay').classList.remove('active');
+    afBuilderState = null;
+  }
+
+  function saveCampaignFromBuilder() {
+    const s = afBuilderState;
+    if (!s.name.trim() || !s.country || !s.retailer) {
+      alert('Completa al menos el nombre, el país y el retailer antes de guardar.');
+      return;
+    }
+    const digitalActions = Object.keys(s.digital).map((activation) => ({ activation, format: typeof s.digital[activation] === 'string' ? s.digital[activation] : '' }));
+    const tradeActions = Object.keys(s.trade).map((activation) => ({ activation }));
+    const brandActions = Object.keys(s.brand).map((activation) => ({ activation }));
+    const mediaKitItems = Object.keys(s.mediaKit).map((id) => {
+      const row = afMediaKit.find((r) => r.id === id);
+      return { id, item: row ? row.inventory : id, source: s.mediaKit[id] };
+    });
+
+    const dateStr = new Date().toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' });
+
+    if (s.editingId) {
+      const existing = afCampaigns.find((c) => c.id === s.editingId);
+      if (existing) {
+        existing.name = s.name.trim();
+        existing.country = s.country;
+        existing.retailer = s.retailer;
+        existing.packUsed = s.packUsed || 'Campaña Personalizada';
+        existing.digitalActions = digitalActions;
+        existing.tradeActions = tradeActions;
+        existing.brandActions = brandActions;
+        existing.mediaKitItems = mediaKitItems;
+        existing.observations = s.observations;
+      }
+    } else {
+      afCampaigns.unshift({
+        id: uid('afcamp'),
+        name: s.name.trim(),
+        country: s.country,
+        retailer: s.retailer,
+        packUsed: s.packUsed || 'Campaña Personalizada',
+        digitalActions, tradeActions, brandActions, mediaKitItems,
+        observations: s.observations,
+        status: 'Pending',
+        date: dateStr,
+      });
+    }
+    persistAFCampaigns();
+    closeCampaignBuilder();
+    renderAFCampaignBank();
+  }
+
+  function afCampaignStatusChipClass(status) {
+    if (status === 'Approved') return 'chip-green';
+    if (status === 'Proposal') return 'chip-navy';
+    return 'chip-amber';
+  }
+
+  function renderAFCampaignBank() {
+    const body = document.getElementById('afCampaignBody');
+    const empty = document.getElementById('afCampaignEmpty');
+    if (!body) return;
+    const q = afCampaignSearchState.toLowerCase();
+    const rows = !q ? afCampaigns : afCampaigns.filter((c) =>
+      (c.name || '').toLowerCase().includes(q) || (c.country || '').toLowerCase().includes(q) || (c.retailer || '').toLowerCase().includes(q));
+
+    if (rows.length === 0) { body.innerHTML = ''; if (empty) empty.hidden = false; return; }
+    if (empty) empty.hidden = true;
+
+    body.innerHTML = rows.map((c) => `
+      <tr>
+        <td>${escapeHtml(c.name)}</td>
+        <td>${escapeHtml(c.country)}</td>
+        <td>${escapeHtml(c.retailer)}</td>
+        <td>${escapeHtml(c.packUsed)}</td>
+        <td>
+          <select class="status-select ${afCampaignStatusChipClass(c.status)}" data-af-campaign-status="${c.id}">
+            ${['Pending', 'Approved', 'Proposal'].map((st) => `<option value="${st}" ${st === c.status ? 'selected' : ''}>${st}</option>`).join('')}
+          </select>
+        </td>
+        <td>${escapeHtml(c.date || '')}</td>
+        <td class="af-campaign-actions-cell">
+          <button class="icon-btn" data-af-view-campaign="${c.id}" aria-label="Ver / Editar" title="Ver / Editar"><svg viewBox="0 0 24 24"><path d="M4 12s3.5-6 8-6 8 6 8 6-3.5 6-8 6-8-6-8-6z" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="2.4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
+          <button class="icon-btn" data-af-export-campaign="${c.id}" aria-label="Exportar PDF" title="Exportar PDF"><svg viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M9 13h6M9 16h6M9 10h2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></button>
+        </td>
+      </tr>
+    `).join('');
+
+    body.querySelectorAll('[data-af-campaign-status]').forEach((sel) => {
+      sel.addEventListener('change', (e) => {
+        const c = afCampaigns.find((x) => x.id === sel.dataset.afCampaignStatus);
+        if (!c) return;
+        c.status = e.target.value;
+        sel.className = `status-select ${afCampaignStatusChipClass(c.status)}`;
+        persistAFCampaigns();
+      });
+    });
+    body.querySelectorAll('[data-af-view-campaign]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const c = afCampaigns.find((x) => x.id === btn.dataset.afViewCampaign);
+        if (c) openCampaignBuilder(c);
+      });
+    });
+    body.querySelectorAll('[data-af-export-campaign]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const c = afCampaigns.find((x) => x.id === btn.dataset.afExportCampaign);
+        if (c) exportCampaignPDF(c);
+      });
+    });
+  }
+
+  function afListOrEmpty(items, formatter) {
+    if (!items || !items.length) return `<p class="af-campaign-detail-empty">Ninguna</p>`;
+    return `<ul class="af-campaign-detail-list">${items.map((it) => `<li>${formatter(it)}</li>`).join('')}</ul>`;
+  }
+
+  function exportCampaignPDF(campaign) {
+    const area = document.getElementById('afCampaignPrintArea');
+    if (!area) return;
+    area.innerHTML = `
+      <div class="af-print-title">${escapeHtml(campaign.name)}</div>
+      <div class="af-print-sub">${escapeHtml(campaign.country)} · ${escapeHtml(campaign.retailer)} · ${escapeHtml(campaign.packUsed)} · Estado: ${escapeHtml(campaign.status)} · ${escapeHtml(campaign.date || '')}</div>
+
+      <div class="af-campaign-detail-section-label">Acciones Digital</div>
+      ${afListOrEmpty(campaign.digitalActions, (it) => `${escapeHtml(it.activation)}${it.format ? ` — ${escapeHtml(it.format)}` : ''}`)}
+
+      <div class="af-campaign-detail-section-label">Acciones Trade</div>
+      ${afListOrEmpty(campaign.tradeActions, (it) => escapeHtml(it.activation))}
+
+      <div class="af-campaign-detail-section-label">Acciones Brand</div>
+      ${afListOrEmpty(campaign.brandActions, (it) => escapeHtml(it.activation))}
+
+      <div class="af-campaign-detail-section-label">Media Kit</div>
+      ${afListOrEmpty(campaign.mediaKitItems, (it) => `${escapeHtml(it.item)} — ${escapeHtml(it.source)}`)}
+
+      <div class="af-campaign-detail-section-label">Observaciones finales</div>
+      <p class="af-campaign-detail-list">${escapeHtml(campaign.observations || 'Ninguna')}</p>
+    `;
+    area.classList.add('printing');
+    window.print();
+    setTimeout(() => area.classList.remove('printing'), 500);
+  }
+
+  document.getElementById('afNewCampaignBtn').addEventListener('click', () => openCampaignBuilder(null));
+  document.getElementById('afBuilderCloseBtn').addEventListener('click', closeCampaignBuilder);
+  document.getElementById('afBuilderOverlay').addEventListener('click', (e) => { if (e.target.id === 'afBuilderOverlay') closeCampaignBuilder(); });
+  document.getElementById('afCampaignSearch').addEventListener('input', (e) => { afCampaignSearchState = e.target.value; renderAFCampaignBank(); });
+
+  function renderActivationFramework() {
+    renderAFCatalog();
+    renderAFTrade();
+    renderAFBrand();
+    renderAFPacks();
+    renderAFMediaKit();
+    renderAFCampaignBank();
+  }
+
+  function afGoToTab(name) {
+    document.querySelectorAll('#afTabs .af-tab').forEach((t) => t.classList.toggle('active', t.dataset.afTab === name));
+    document.querySelectorAll('.af-tab-panel').forEach((p) => p.classList.toggle('active', p.id === 'afPanel-' + name));
+  }
+  document.querySelectorAll('#afTabs .af-tab').forEach((tab) => {
+    tab.addEventListener('click', () => afGoToTab(tab.dataset.afTab));
   });
 
   /* ------------------------------------------------------------------------
@@ -3422,6 +4293,7 @@
     renderCampaignTable();
     renderChartControls();
     renderGrowthChart();
+    renderActivationFramework();
   }
 
   // Vuelve a cargar los 19 tipos de dato desde window.__HUB_REMOTE_DATA
@@ -3448,12 +4320,25 @@
     briefs = loadStore(STORE_KEYS.briefs, []);
     contentInputs = loadStore(STORE_KEYS.contentInputs, []);
     calendarPosts = loadStore(STORE_KEYS.calendarPosts, DEFAULT_CALENDAR_POSTS);
+    afCatalogColumns = loadStore(STORE_KEYS.afCatalogColumns, DEFAULT_AF_CATALOG_COLUMNS);
+    afCatalog = loadStore(STORE_KEYS.afCatalog, DEFAULT_AF_CATALOG);
+    afMediaKitColumns = loadStore(STORE_KEYS.afMediaKitColumns, DEFAULT_AF_MEDIAKIT_COLUMNS);
+    afMediaKit = loadStore(STORE_KEYS.afMediaKit, DEFAULT_AF_MEDIAKIT);
+    afTradeColumns = loadStore(STORE_KEYS.afTradeColumns, DEFAULT_AF_TRADE_COLUMNS);
+    afTrade = loadStore(STORE_KEYS.afTrade, DEFAULT_AF_TRADE);
+    afBrandColumns = loadStore(STORE_KEYS.afBrandColumns, DEFAULT_AF_BRAND_COLUMNS);
+    afBrand = loadStore(STORE_KEYS.afBrand, DEFAULT_AF_BRAND);
+    afCampaigns = loadStore(STORE_KEYS.afCampaigns, DEFAULT_AF_CAMPAIGNS);
     renderAll();
   }
   window.__hubReloadAll = reloadAllFromRemote;
 
   inventoryBodyDelegation();
   campaignBodyDelegation();
+  afCatalogController.bodyDelegation();
+  afMediaKitController.bodyDelegation();
+  afTradeController.bodyDelegation();
+  afBrandController.bodyDelegation();
   renderAll();
 
   const initialView = (location.hash || '#dashboard').replace('#', '');
